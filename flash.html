@@ -521,6 +521,16 @@
           </span>
           <svg class="settings-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
         </div>
+        <!-- Download group: hidden until the deck has loaded successfully -->
+        <div id="downloadGroup" style="display:none;">
+          <div class="settings-divider"></div>
+          <div class="settings-item" id="downloadRow">
+            <span class="row-label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+              <span data-en="Download deck (.apkg)" data-ar="تحميل الملف (.apkg)">Download deck (.apkg)</span>
+            </span>
+          </div>
+        </div>
         <div class="settings-divider"></div>
         <div class="settings-item" id="langToggleRow">
           <span class="row-label">
@@ -698,6 +708,12 @@
     if (typeof renderBrowseMode === 'function' && deckCards.length) renderBrowseMode();
   });
 
+  document.getElementById('downloadRow').addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeSettings();
+    downloadDeckFile();
+  });
+
   function updateModeCheckmarks(){
     document.getElementById('modeStudyRow').classList.toggle('active-row', viewMode === 'study');
     document.getElementById('modeBrowseRow').classList.toggle('active-row', viewMode === 'browse');
@@ -783,6 +799,32 @@
   let currentIndex = 0;
   let viewMode = 'study';   // 'study' | 'browse'
   let isAnimatingNav = false; // guards against rapid multi-step swipes/taps
+
+  // Original .apkg file kept in memory so the user can save it locally
+  let deckFileBuffer = null;
+  let deckFileName = 'flashcards.apkg';
+
+  function buildDeckFileName(material){
+    let base = String(material.file_name || material.title || 'flashcards');
+    base = base.replace(/\.apkg$/i, '');
+    base = base.replace(/[\\/:*?"<>|]+/g, '').trim();
+    if (!base) base = 'flashcards';
+    return base + '.apkg';
+  }
+
+  function downloadDeckFile(){
+    if (!deckFileBuffer) return;
+    const blob = new Blob([deckFileBuffer], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = deckFileName;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
 
   /* ---------------- HTML template rendering (Anki field substitution) ---------------- */
   function fillTemplate(tpl, fieldMap){
@@ -1200,6 +1242,9 @@
       return;
     }
 
+    // Keep an untouched copy of the original file for the download option
+    const originalCopy = arrayBuffer.slice(0);
+
     try {
       deckCards = await parseApkg(arrayBuffer);
     } catch (e){
@@ -1234,6 +1279,11 @@
       }
       return;
     }
+
+    // Deck loaded fine — enable the download option in the settings menu
+    deckFileBuffer = originalCopy;
+    deckFileName = buildDeckFileName(material);
+    document.getElementById('downloadGroup').style.display = 'block';
 
     deckSub.textContent = currentLang==='ar'
       ? `${deckCards.length} بطاقة`

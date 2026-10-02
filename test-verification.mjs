@@ -7,6 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 let failures = 0;
+let passed = 0;
 
 function assert(condition, message) {
   if (!condition) {
@@ -14,6 +15,7 @@ function assert(condition, message) {
     failures++;
   } else {
     console.log(`✅ PASS: ${message}`);
+    passed++;
   }
 }
 
@@ -36,6 +38,11 @@ assert(flashHtml.includes('HIGH_YIELD_DEMO_DECK'), 'flash.html contains built-in
 assert(flashHtml.includes('mb_synaptic_vault'), 'flash.html contains Sovereign IndexedDB vault integration');
 assert(flashHtml.includes('lightboxModal'), 'flash.html contains Clinical Diagram Lightbox Zoom');
 assert(flashHtml.includes('usmle_60s'), 'flash.html contains USMLE 60-Second exam pace countdown');
+assert(flashHtml.includes('localApkgInput'), 'flash.html contains local .apkg file picker input');
+assert(flashHtml.includes('resolveCardMedia'), 'flash.html contains persistent media rehydration & resolver');
+assert(flashHtml.includes('dropZoneOverlay') || flashHtml.includes('drop-zone-overlay'), 'flash.html contains drag-and-drop .apkg loader');
+assert(flashHtml.includes('lightboxZoomInBtn'), 'flash.html contains pan & zoom clinical lightbox controls');
+assert(flashHtml.includes('inMemoryMediaCache'), 'flash.html maintains memory media cache for offline diagrams');
 
 // 3. Verify flashmake.html
 const flashmakeHtml = fs.readFileSync('flashmake.html', 'utf-8');
@@ -88,7 +95,7 @@ assert(blockMatches.length === 1 && blockMatches[0].includes('CO'), 'KaTeX block
 
 console.log('\n==================================================');
 if (failures === 0) {
-  console.log('🎉 ALL 24 VERIFICATION CHECKS PASSED PERFECTLY!');
+  console.log(`🎉 ALL ${passed} VERIFICATION CHECKS PASSED PERFECTLY!`);
   console.log('==================================================');
   process.exit(0);
 } else {

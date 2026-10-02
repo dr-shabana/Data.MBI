@@ -586,16 +586,81 @@
   /* Lightbox Modal */
   .lightbox-overlay{
     position:fixed; inset:0; z-index:200;
-    background:rgba(0,0,0,0.92);
-    display:none; align-items:center; justify-content:center;
-    padding:20px; cursor:zoom-out;
+    background:rgba(0,0,0,0.94);
+    display:none; flex-direction:column;
+    padding:0; overflow:hidden;
+    user-select:none;
+    touch-action:none;
+    backdrop-filter:blur(10px);
   }
   .lightbox-overlay.open{display:flex;}
-  .lightbox-img{
-    max-width:92vw; max-height:88vh; object-fit:contain;
-    border-radius:8px; box-shadow:0 0 40px rgba(0,0,0,0.8);
-    transition:transform .2s ease;
+  .lightbox-toolbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 20px;
+    background:rgba(20,20,20,0.85);
+    border-bottom:1px solid var(--line);
+    z-index:10;
   }
+  .lightbox-title{
+    font-size:0.85rem; font-weight:700; color:var(--text-dim);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    max-width:50vw;
+  }
+  .lightbox-actions{
+    display:flex; align-items:center; gap:8px;
+  }
+  .lightbox-zoom-badge{
+    font-size:0.75rem; font-family:'JetBrains Mono',monospace; font-weight:700;
+    color:var(--text-dim); background:var(--panel-hi); padding:4px 8px; border-radius:6px;
+    border:1px solid var(--line-soft); min-width:48px; text-align:center;
+  }
+  .lightbox-btn{
+    width:34px; height:34px; border-radius:8px;
+    background:var(--panel-hi); border:1px solid var(--line);
+    color:var(--text-dim); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:all .15s ease;
+  }
+  .lightbox-btn:hover{color:var(--text); border-color:var(--text-dim); background:var(--panel);}
+  .lightbox-btn svg{width:16px; height:16px;}
+  .lightbox-btn.lightbox-close{
+    font-size:1.1rem; font-weight:700; margin-left:4px;
+    color:#f43f5e; border-color:rgba(244,63,94,0.3);
+  }
+  .lightbox-btn.lightbox-close:hover{background:rgba(244,63,94,0.15); border-color:#f43f5e;}
+  .lightbox-viewport{
+    flex:1; width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden; cursor:grab;
+  }
+  .lightbox-viewport.panning{cursor:grabbing;}
+  .lightbox-img{
+    max-width:92vw; max-height:85vh; object-fit:contain;
+    border-radius:6px; box-shadow:0 0 50px rgba(0,0,0,0.85);
+    transform-origin:center center;
+    transition:transform .1s cubic-bezier(0.2,0,0,1);
+    pointer-events:auto;
+  }
+  .lightbox-hint{
+    position:absolute; bottom:14px; left:50%; transform:translateX(-50%);
+    font-size:0.75rem; color:var(--text-faint); background:rgba(0,0,0,0.7);
+    padding:4px 12px; border-radius:14px; pointer-events:none; border:1px solid var(--line-soft);
+  }
+
+  /* Drag & Drop Overlay */
+  .drop-zone-overlay{
+    position:fixed; inset:0; z-index:300;
+    background:rgba(11,11,11,0.92);
+    border:3px dashed var(--accent);
+    display:none; flex-direction:column;
+    align-items:center; justify-content:center; gap:16px;
+    backdrop-filter:blur(6px);
+    pointer-events:none;
+  }
+  .drop-zone-overlay.drag-over{display:flex;}
+  .drop-zone-icon{font-size:3.5rem; animation:dropBounce 0.8s infinite alternate ease-in-out;}
+  @keyframes dropBounce{from{transform:translateY(0);} to{transform:translateY(-10px);}}
+  .drop-zone-text{font-size:1.3rem; font-weight:800; color:var(--text);}
+  .drop-zone-sub{font-size:0.86rem; color:var(--text-dim);}
 
   /* Empty / Error States */
   .state-hero{
@@ -645,6 +710,15 @@
 </head>
 <body>
 
+  <!-- ── Drag & Drop .apkg Overlay ── -->
+  <div class="drop-zone-overlay" id="dropZoneOverlay">
+    <div class="drop-zone-icon">📥</div>
+    <div class="drop-zone-text" data-en="Drop .apkg Deck to Import" data-ar="أفلت ملف .apkg للاستيراد">Drop .apkg Deck to Import</div>
+    <div class="drop-zone-sub" data-en="SQLite collection and media diagrams will be extracted into Synaptic Vault" data-ar="سيتم استخراج البطاقات والصور الطبية وحفظها محلياً">SQLite collection and media diagrams will be extracted into Synaptic Vault</div>
+  </div>
+
+  <input type="file" id="localApkgInput" accept=".apkg,.zip" style="display:none;" />
+
   <!-- ── Top Header Navigation ── -->
   <header class="site-header">
     <div class="header-left">
@@ -665,6 +739,11 @@
       <button type="button" class="timer-chip" id="sessionTimerBtn" title="Clinical Exam Pace Timer (Click to toggle modes)">
         <span id="timerModeIcon">⏱️</span>
         <span id="timerDisplay">0:00</span>
+      </button>
+
+      <!-- Open Local .apkg Trigger -->
+      <button type="button" class="icon-btn" id="openApkgBtn" title="Open .apkg Deck from Disk (or Drag & Drop)" aria-label="Open deck file">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       </button>
 
       <!-- Card Browser Modal Trigger -->
@@ -713,6 +792,13 @@
         </div>
 
         <div class="settings-divider"></div>
+
+        <div class="settings-item" id="openLocalApkgRow">
+          <div class="row-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5-5 5 5M12 5v12"/></svg>
+            <span data-en="Open Local .apkg File" data-ar="فتح ملف .apkg محلي">Open Local .apkg File</span>
+          </div>
+        </div>
 
         <div class="settings-item" id="summaryModalRow">
           <div class="row-label">
@@ -848,8 +934,27 @@
   </main>
 
   <!-- ── Lightbox Image Modal ── -->
-  <div class="lightbox-overlay" id="lightboxModal" role="dialog" aria-modal="true">
-    <img class="lightbox-img" id="lightboxImg" alt="Clinical Diagram High-Resolution Zoom" />
+  <div class="lightbox-overlay" id="lightboxModal" role="dialog" aria-modal="true" aria-label="Clinical Diagram Zoom">
+    <div class="lightbox-toolbar" id="lightboxToolbar">
+      <div class="lightbox-title" id="lightboxTitle">Clinical Reference Diagram</div>
+      <div class="lightbox-actions">
+        <span class="lightbox-zoom-badge" id="lightboxZoomLevel">100%</span>
+        <button type="button" class="lightbox-btn" id="lightboxZoomOutBtn" title="Zoom Out (-)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </button>
+        <button type="button" class="lightbox-btn" id="lightboxZoomInBtn" title="Zoom In (+)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </button>
+        <button type="button" class="lightbox-btn" id="lightboxZoomResetBtn" title="Reset Zoom (0)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        </button>
+        <button type="button" class="lightbox-btn lightbox-close" id="lightboxCloseBtn" title="Close Lightbox (Esc)">✕</button>
+      </div>
+    </div>
+    <div class="lightbox-viewport" id="lightboxViewport">
+      <img class="lightbox-img" id="lightboxImg" alt="Clinical Diagram High-Resolution Zoom" draggable="false" />
+      <div class="lightbox-hint">Scroll to zoom · Drag to pan · Double-click to toggle 2.5x</div>
+    </div>
   </div>
 
   <!-- ── Card Browser Modal ── -->
@@ -1081,11 +1186,12 @@
     }
 
     /* =========================================================================
-       3. SOVEREIGN INDEXEDDB VAULT (100% Offline-First)
+       3. SOVEREIGN INDEXEDDB VAULT (100% Offline-First) & MEDIA RESOLVER
        ========================================================================= */
     const IDB_NAME = 'mb_synaptic_vault';
     const IDB_VERSION = 1;
     let idbPromise = null;
+    const inMemoryMediaCache = new Map();
 
     function openVault(){
       if (idbPromise) return idbPromise;
@@ -1103,6 +1209,91 @@
       return idbPromise;
     }
 
+    function extractCleanFilename(src){
+      if (!src) return '';
+      try {
+        const parts = src.split('/');
+        const last = parts[parts.length - 1].split('?')[0].split('#')[0];
+        return decodeURIComponent(last);
+      } catch(e){
+        return src;
+      }
+    }
+
+    async function getMediaBlobUrl(filename){
+      if (!filename) return null;
+      const clean = decodeURIComponent(filename);
+      if (inMemoryMediaCache.has(clean)) return inMemoryMediaCache.get(clean);
+      if (inMemoryMediaCache.has(filename)) return inMemoryMediaCache.get(filename);
+      try {
+        const db = await openVault();
+        const tx = db.transaction('media', 'readonly');
+        const store = tx.objectStore('media');
+        const req = store.get(clean);
+        const res = await new Promise(r => { req.onsuccess = () => r(req.result); req.onerror = () => r(null); });
+        if (res && res.blob){
+          const url = URL.createObjectURL(res.blob);
+          inMemoryMediaCache.set(clean, url);
+          inMemoryMediaCache.set(filename, url);
+          return url;
+        }
+        if (clean !== filename){
+          const req2 = store.get(filename);
+          const res2 = await new Promise(r => { req2.onsuccess = () => r(req2.result); req2.onerror = () => r(null); });
+          if (res2 && res2.blob){
+            const url = URL.createObjectURL(res2.blob);
+            inMemoryMediaCache.set(clean, url);
+            inMemoryMediaCache.set(filename, url);
+            return url;
+          }
+        }
+      } catch(e){}
+      return null;
+    }
+
+    async function resolveCardMedia(container){
+      if (!container) return;
+      // Resolve image tags
+      const imgs = container.querySelectorAll('img');
+      for (const img of imgs){
+        img.loading = 'lazy';
+        img.style.cursor = 'zoom-in';
+        if (!img.title) img.title = 'Click to inspect in clinical diagram lightbox (scroll/pan/zoom)';
+        
+        let fn = img.dataset.filename;
+        if (!fn){
+          const rawSrc = img.getAttribute('src') || '';
+          if (!rawSrc.startsWith('data:')){
+            fn = extractCleanFilename(rawSrc);
+            img.dataset.filename = fn;
+          }
+        }
+        
+        if (fn && !img.src.startsWith('data:')){
+          const activeUrl = await getMediaBlobUrl(fn);
+          if (activeUrl && img.src !== activeUrl){
+            img.src = activeUrl;
+          }
+        }
+
+        img.onerror = () => {
+          if (img.dataset.filename && !img.dataset.retried){
+            img.dataset.retried = '1';
+            getMediaBlobUrl(img.dataset.filename).then(u => {
+              if (u) img.src = u;
+            });
+          }
+        };
+      }
+
+      // Add zoom cues to embedded SVGs
+      const svgs = container.querySelectorAll('svg');
+      for (const svg of svgs){
+        svg.style.cursor = 'zoom-in';
+        if (!svg.getAttribute('title')) svg.setAttribute('title', 'Click to inspect in clinical diagram lightbox (scroll/pan/zoom)');
+      }
+    }
+
     async function saveDeckToVault(deckId, meta, cards, mediaMap){
       try {
         const db = await openVault();
@@ -1113,6 +1304,9 @@
         const mediaStore = tx.objectStore('media');
         for (const [name, blob] of Object.entries(mediaMap || {})){
           mediaStore.put({ name, blob });
+          const url = URL.createObjectURL(blob);
+          inMemoryMediaCache.set(name, url);
+          inMemoryMediaCache.set(decodeURIComponent(name), url);
         }
         await new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = rej; });
       } catch(e){ console.warn('IndexedDB save skipped:', e); }
@@ -1121,19 +1315,38 @@
     async function loadDeckFromVault(deckId){
       try {
         const db = await openVault();
-        const tx = db.transaction(['decks', 'cards'], 'readonly');
+        const tx = db.transaction(['decks', 'cards', 'media'], 'readonly');
         const deckReq = tx.objectStore('decks').get(deckId);
         const cardReq = tx.objectStore('cards').getAll();
-        const deckMeta = await new Promise(res => { deckReq.onsuccess = () => res(deckReq.result); });
-        const allCards = await new Promise(res => { cardReq.onsuccess = () => res(cardReq.result); });
+        const mediaReq = tx.objectStore('media').getAll();
+
+        const deckMeta = await new Promise(res => { deckReq.onsuccess = () => res(deckReq.result); deckReq.onerror = () => res(null); });
+        const allCards = await new Promise(res => { cardReq.onsuccess = () => res(cardReq.result || []); cardReq.onerror = () => res([]); });
+        const allMedia = await new Promise(res => { mediaReq.onsuccess = () => res(mediaReq.result || []); mediaReq.onerror = () => res([]); });
+
         if (!deckMeta) return null;
+
+        // Rehydrate in-memory media cache from IndexedDB
+        for (const item of allMedia){
+          if (item.name && item.blob){
+            try {
+              const url = URL.createObjectURL(item.blob);
+              inMemoryMediaCache.set(item.name, url);
+              inMemoryMediaCache.set(decodeURIComponent(item.name), url);
+            } catch(err){}
+          }
+        }
+
         const deckCards = allCards.filter(c => c.deckId === deckId);
         return { meta: deckMeta, cards: deckCards };
-      } catch(e){ return null; }
+      } catch(e){
+        console.warn('loadDeckFromVault error:', e);
+        return null;
+      }
     }
 
     /* =========================================================================
-       4. HIGH-YIELD CLINICAL DEMO DECK
+       4. HIGH-YIELD CLINICAL DEMO DECK (Embedded Diagrams & Vector Figures)
        ========================================================================= */
     const HIGH_YIELD_DEMO_DECK = [
       {
@@ -1145,8 +1358,30 @@
       {
         id: 'demo-2',
         cardType: 'cardiac_cycle',
-        front: 'During which phase of the left ventricular pressure-volume loop is coronary perfusion to the left myocardium at its maximum?',
-        back: '<strong>Isovolumetric Relaxation and Early Diastole</strong>.<br>During systole, forceful myocardial contraction compresses intramyocardial subendocardial coronary capillaries, abruptly reducing coronary blood flow to its trough.'
+        front: 'During which phase of the left ventricular cardiac cycle is coronary perfusion to the left myocardium at its maximum?',
+        back: `<strong>Isovolumetric Relaxation and Early Diastole</strong>.<br>During systole, forceful myocardial contraction compresses intramyocardial subendocardial coronary capillaries, abruptly reducing coronary blood flow to its trough.<br><br>
+        <div style="text-align:center;">
+          <svg viewBox="0 0 520 220" style="max-width:100%; height:auto; border-radius:8px; background:#18181b; border:1px solid #27272a; padding:12px;" role="img" aria-label="Left Ventricular Coronary Flow Curve Across Cardiac Cycle">
+            <text x="260" y="24" fill="#f4f4f5" font-size="13" font-weight="700" text-anchor="middle">Left Ventricular Coronary Flow Velocity across Cardiac Cycle</text>
+            <line x1="50" y1="180" x2="480" y2="180" stroke="#52525b" stroke-width="1.5"/>
+            <line x1="50" y1="40" x2="50" y2="180" stroke="#52525b" stroke-width="1.5"/>
+            <text x="45" y="45" fill="#a1a1aa" font-size="10" text-anchor="end">Flow (mL/min)</text>
+            <text x="260" y="202" fill="#a1a1aa" font-size="10" text-anchor="middle">Cardiac Cycle Phase</text>
+            <!-- Systole Zone -->
+            <rect x="50" y="40" width="160" height="140" fill="rgba(239, 68, 68, 0.08)" stroke="#ef4444" stroke-dasharray="3 3"/>
+            <text x="130" y="60" fill="#ef4444" font-size="11" font-weight="700" text-anchor="middle">SYSTOLE</text>
+            <text x="130" y="75" fill="#f87171" font-size="9" text-anchor="middle">(Vessel Compression)</text>
+            <!-- Diastole Zone -->
+            <rect x="210" y="40" width="270" height="140" fill="rgba(16, 185, 129, 0.08)" stroke="#10b981" stroke-dasharray="3 3"/>
+            <text x="345" y="60" fill="#10b981" font-size="11" font-weight="700" text-anchor="middle">DIASTOLE</text>
+            <text x="345" y="75" fill="#34d399" font-size="9" text-anchor="middle">(Peak Capillary Perfusion)</text>
+            <!-- Flow Curve -->
+            <path d="M 50 140 Q 90 175 130 165 Q 170 155 210 175 Q 230 70 280 80 Q 360 95 440 140 L 480 150" fill="none" stroke="#38bdf8" stroke-width="3"/>
+            <!-- Peak Marker -->
+            <circle cx="280" cy="80" r="5" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+            <text x="290" y="96" fill="#38bdf8" font-size="10" font-weight="700">Peak Coronary Perfusion</text>
+          </svg>
+        </div>`
       },
       {
         id: 'demo-3',
@@ -1158,13 +1393,49 @@
         id: 'demo-4',
         cardType: 'ecg_arrhythmia',
         front: 'What is the characteristic ECG finding in Wolff-Parkinson-White (WPW) syndrome, and what congenital anomalous pathway causes it?',
-        back: '<strong>ECG Triad:</strong><br>1. Shortened $PR$ interval (< 120 ms)<br>2. Slurred upstroke of the QRS complex (<strong>Delta wave</strong>)<br>3. Widened $QRS$ complex (> 120 ms)<br><br><strong>Etiology:</strong> Bundle of Kent anomalous atrioventricular accessory pathway bypassing the AV node.'
+        back: `<strong>ECG Triad:</strong><br>1. Shortened $PR$ interval (< 120 ms)<br>2. Slurred upstroke of the QRS complex (<strong>Delta wave</strong>)<br>3. Widened $QRS$ complex (> 120 ms)<br><br><strong>Etiology:</strong> Bundle of Kent anomalous atrioventricular accessory pathway bypassing the AV node.<br><br>
+        <div style="text-align:center;">
+          <svg viewBox="0 0 520 200" style="max-width:100%; height:auto; border-radius:8px; background:#18181b; border:1px solid #27272a; padding:12px;" role="img" aria-label="Wolff-Parkinson-White ECG with Delta Wave Morphology">
+            <text x="260" y="24" fill="#f4f4f5" font-size="13" font-weight="700" text-anchor="middle">Wolff-Parkinson-White (WPW) ECG Morphology</text>
+            <line x1="30" y1="130" x2="490" y2="130" stroke="#3f3f46" stroke-dasharray="2 2"/>
+            <path d="M 50 130 Q 80 100 110 130" fill="none" stroke="#facc15" stroke-width="2.5"/>
+            <text x="80" y="92" fill="#facc15" font-size="11" font-weight="700" text-anchor="middle">P Wave</text>
+            <path d="M 110 130 L 140 130 L 175 80 L 195 30 L 210 160 L 225 130" fill="none" stroke="#f43f5e" stroke-width="3"/>
+            <path d="M 140 130 L 175 80" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+            <line x1="157" y1="105" x2="130" y2="65" stroke="#38bdf8" stroke-width="1.5"/>
+            <text x="125" y="55" fill="#38bdf8" font-size="11" font-weight="800">Delta Wave (Δ)</text>
+            <line x1="50" y1="145" x2="140" y2="145" stroke="#a1a1aa" stroke-width="1.5"/>
+            <text x="95" y="160" fill="#a1a1aa" font-size="10" text-anchor="middle">Short PR (< 120ms)</text>
+            <line x1="140" y1="175" x2="225" y2="175" stroke="#fb7185" stroke-width="1.5"/>
+            <text x="182" y="190" fill="#fb7185" font-size="10" text-anchor="middle">Widened QRS (> 120ms)</text>
+            <path d="M 225 130 L 270 130 Q 320 85 370 130 L 450 130" fill="none" stroke="#4ade80" stroke-width="2.5"/>
+            <text x="320" y="78" fill="#4ade80" font-size="11" font-weight="700" text-anchor="middle">T Wave</text>
+          </svg>
+        </div>`
       },
       {
         id: 'demo-5',
         cardType: 'cloze_recall',
         front: 'The Frank-Starling mechanism states that increasing ventricular {{c1::end-diastolic volume (preload)}} leads to an increase in {{c2::stroke volume}}, due to optimal actin-myosin cross-bridge overlap.',
-        back: 'The Frank-Starling mechanism states that increasing ventricular <span class="cloze-blank">end-diastolic volume (preload)</span> leads to an increase in <span class="cloze-blank">stroke volume</span>, due to optimal actin-myosin cross-bridge overlap.'
+        back: `The Frank-Starling mechanism states that increasing ventricular <span class="cloze-blank">end-diastolic volume (preload)</span> leads to an increase in <span class="cloze-blank">stroke volume</span>, due to optimal actin-myosin cross-bridge overlap.<br><br>
+        <div style="text-align:center;">
+          <svg viewBox="0 0 520 210" style="max-width:100%; height:auto; border-radius:8px; background:#18181b; border:1px solid #27272a; padding:12px;" role="img" aria-label="Frank-Starling Ventricular Function Curves">
+            <text x="260" y="24" fill="#f4f4f5" font-size="13" font-weight="700" text-anchor="middle">Frank-Starling Ventricular Function Curves</text>
+            <line x1="60" y1="180" x2="480" y2="180" stroke="#52525b" stroke-width="1.5"/>
+            <line x1="60" y1="40" x2="60" y2="180" stroke="#52525b" stroke-width="1.5"/>
+            <text x="55" y="45" fill="#a1a1aa" font-size="10" text-anchor="end">Stroke Volume / Cardiac Output</text>
+            <text x="270" y="200" fill="#a1a1aa" font-size="10" text-anchor="middle">Ventricular End-Diastolic Volume (Preload)</text>
+            <!-- Increased Inotropy curve -->
+            <path d="M 60 180 Q 180 50 460 70" fill="none" stroke="#22c55e" stroke-width="2.5"/>
+            <text x="465" y="72" fill="#22c55e" font-size="10" font-weight="700">+ Inotropy (Digoxin / Sympathetic)</text>
+            <!-- Normal Curve -->
+            <path d="M 60 180 Q 200 85 460 110" fill="none" stroke="#38bdf8" stroke-width="3"/>
+            <text x="465" y="112" fill="#38bdf8" font-size="10" font-weight="700">Normal Baseline Curve</text>
+            <!-- Heart Failure curve -->
+            <path d="M 60 180 Q 220 135 460 150" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+            <text x="465" y="152" fill="#ef4444" font-size="10" font-weight="700">Systolic Failure (Reduced EF)</text>
+          </svg>
+        </div>`
       }
     ];
 
@@ -1232,8 +1503,22 @@
     const cueReveal = document.getElementById('cueReveal');
     const gestureCompassHud = document.getElementById('gestureCompassHud');
 
+    const openApkgBtn = document.getElementById('openApkgBtn');
+    const localApkgInput = document.getElementById('localApkgInput');
+    const openLocalApkgRow = document.getElementById('openLocalApkgRow');
+    const dropZoneOverlay = document.getElementById('dropZoneOverlay');
+
     const lightboxModal = document.getElementById('lightboxModal');
     const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxToolbar = document.getElementById('lightboxToolbar');
+    const lightboxTitle = document.getElementById('lightboxTitle');
+    const lightboxZoomLevel = document.getElementById('lightboxZoomLevel');
+    const lightboxZoomOutBtn = document.getElementById('lightboxZoomOutBtn');
+    const lightboxZoomInBtn = document.getElementById('lightboxZoomInBtn');
+    const lightboxZoomResetBtn = document.getElementById('lightboxZoomResetBtn');
+    const lightboxCloseBtn = document.getElementById('lightboxCloseBtn');
+    const lightboxViewport = document.getElementById('lightboxViewport');
+
     const browserModal = document.getElementById('browserModal');
     const browserSearchInput = document.getElementById('browserSearchInput');
     const browserListContainer = document.getElementById('browserListContainer');
@@ -1278,7 +1563,21 @@
        8. CARD PRESENTATION & RENDERING
        ========================================================================= */
     function renderCard(){
-      if (!deckCards.length) return;
+      if (!deckCards.length){
+        frontContent.innerHTML = `
+          <div style="text-align:center; padding:30px 10px;">
+            <div style="font-size:2.5rem; margin-bottom:12px;">📭</div>
+            <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:8px;">No Cards in Current Deck</h3>
+            <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:20px;">Open a local .apkg file from disk or explore the high-yield clinical demo deck.</p>
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+              <button type="button" class="primary-btn" onclick="document.getElementById('localApkgInput').click()">Open .apkg File</button>
+              <button type="button" class="secondary-btn" onclick="window.location.search='?deck=demo'">Load Demo Deck</button>
+            </div>
+          </div>
+        `;
+        backContent.innerHTML = '';
+        return;
+      }
       const card = deckCards[currentIndex];
       if (!card) return;
 
@@ -1293,6 +1592,10 @@
 
       frontContent.innerHTML = renderMathInHtml(card.front);
       backContent.innerHTML = renderMathInHtml(card.back);
+
+      // Dynamically resolve card media images and SVGs
+      resolveCardMedia(frontContent);
+      resolveCardMedia(backContent);
 
       // Pre-calculate live intervals for rating buttons
       const againSched = computeFsrsSchedule(card, 1);
@@ -1533,19 +1836,136 @@
     });
 
     /* =========================================================================
-       11. CLINICAL DIAGRAM LIGHTBOX
+       11. CLINICAL DIAGRAM LIGHTBOX (Pan, Zoom, SVG & High-Res Inspection)
        ========================================================================= */
     function initLightbox(){
+      let currentZoom = 1;
+      let panX = 0;
+      let panY = 0;
+      let isPanning = false;
+      let startX = 0;
+      let startY = 0;
+
+      function updateTransform(){
+        lightboxImg.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${currentZoom})`;
+        if (lightboxZoomLevel) lightboxZoomLevel.textContent = `${Math.round(currentZoom * 100)}%`;
+      }
+
+      function resetZoom(){
+        currentZoom = 1;
+        panX = 0;
+        panY = 0;
+        updateTransform();
+      }
+
+      function setZoom(newZoom){
+        currentZoom = Math.max(0.5, Math.min(5, Math.round(newZoom * 100) / 100));
+        if (currentZoom <= 1.02){
+          panX = 0;
+          panY = 0;
+        }
+        updateTransform();
+      }
+
+      // Open lightbox on image or SVG click
       document.addEventListener('click', (e) => {
         const img = e.target.closest('.flip-face-content img');
         if (img){
           lightboxImg.src = img.src;
+          const title = img.dataset.filename || img.getAttribute('alt') || img.title || 'Clinical Reference Diagram';
+          if (lightboxTitle) lightboxTitle.textContent = title;
+          resetZoom();
           lightboxModal.classList.add('open');
+          return;
+        }
+        const svg = e.target.closest('.flip-face-content svg');
+        if (svg){
+          const svgXml = new XMLSerializer().serializeToString(svg);
+          const blob = new Blob([svgXml], { type: 'image/svg+xml;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          lightboxImg.src = url;
+          const title = svg.getAttribute('aria-label') || 'Clinical Vector Figure';
+          if (lightboxTitle) lightboxTitle.textContent = title;
+          resetZoom();
+          lightboxModal.classList.add('open');
+          return;
         }
       });
-      lightboxModal.addEventListener('click', () => {
-        lightboxModal.classList.remove('open');
+
+      // Toolbar Controls
+      if (lightboxZoomInBtn){
+        lightboxZoomInBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setZoom(currentZoom + 0.35);
+        });
+      }
+      if (lightboxZoomOutBtn){
+        lightboxZoomOutBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setZoom(currentZoom - 0.35);
+        });
+      }
+      if (lightboxZoomResetBtn){
+        lightboxZoomResetBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          resetZoom();
+        });
+      }
+      if (lightboxCloseBtn){
+        lightboxCloseBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          lightboxModal.classList.remove('open');
+        });
+      }
+
+      // Close when clicking directly on background
+      lightboxModal.addEventListener('click', (e) => {
+        if (e.target === lightboxModal || e.target === lightboxViewport){
+          lightboxModal.classList.remove('open');
+        }
       });
+
+      // Double-click to toggle 2.5x zoom
+      if (lightboxViewport){
+        lightboxViewport.addEventListener('dblclick', (e) => {
+          if (e.target.closest('.lightbox-toolbar')) return;
+          e.preventDefault();
+          if (currentZoom > 1.2) resetZoom();
+          else setZoom(2.5);
+        });
+
+        // Mouse Wheel Zoom
+        lightboxViewport.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          const delta = e.deltaY < 0 ? 0.25 : -0.25;
+          setZoom(currentZoom + delta);
+        }, { passive: false });
+
+        // Pan & Drag when zoomed in
+        lightboxViewport.addEventListener('pointerdown', (e) => {
+          if (e.target.closest('.lightbox-toolbar')) return;
+          if (currentZoom <= 1.05) return;
+          isPanning = true;
+          startX = e.clientX - panX;
+          startY = e.clientY - panY;
+          lightboxViewport.classList.add('panning');
+          lightboxViewport.setPointerCapture?.(e.pointerId);
+        });
+
+        window.addEventListener('pointermove', (e) => {
+          if (!isPanning) return;
+          panX = e.clientX - startX;
+          panY = e.clientY - startY;
+          updateTransform();
+        });
+
+        window.addEventListener('pointerup', () => {
+          if (isPanning){
+            isPanning = false;
+            lightboxViewport.classList.remove('panning');
+          }
+        });
+      }
     }
 
     /* =========================================================================
@@ -1658,6 +2078,31 @@
     window.addEventListener('keydown', (e) => {
       if (e.target.closest('input, textarea, select')) return;
 
+      // Handle Lightbox Zoom Keys
+      if (lightboxModal && lightboxModal.classList.contains('open')){
+        if (e.key === 'Escape'){
+          e.preventDefault();
+          lightboxModal.classList.remove('open');
+          return;
+        }
+        if (e.key === '+' || e.key === '='){
+          e.preventDefault();
+          lightboxZoomInBtn?.click();
+          return;
+        }
+        if (e.key === '-' || e.key === '_'){
+          e.preventDefault();
+          lightboxZoomOutBtn?.click();
+          return;
+        }
+        if (e.key === '0'){
+          e.preventDefault();
+          lightboxZoomResetBtn?.click();
+          return;
+        }
+        return;
+      }
+
       if (e.code === 'Space' || e.code === 'Enter'){
         e.preventDefault();
         if (!isFlipped) revealAnswer();
@@ -1762,7 +2207,7 @@
     });
 
     /* =========================================================================
-       16. APKG PARSER (SQLite via sql.js + JSZip)
+       16. APKG PARSER & FILE IMPORTER (SQLite via sql.js + JSZip)
        ========================================================================= */
     async function parseApkg(arrayBuffer){
       const zip = await JSZip.loadAsync(arrayBuffer);
@@ -1782,7 +2227,11 @@
         if (!f) continue;
         const blob = await f.async('blob');
         mediaBlobMap[realName] = blob;
-        mediaUrlMap[realName] = URL.createObjectURL(blob);
+        const url = URL.createObjectURL(blob);
+        mediaUrlMap[realName] = url;
+        mediaUrlMap[decodeURIComponent(realName)] = url;
+        inMemoryMediaCache.set(realName, url);
+        inMemoryMediaCache.set(decodeURIComponent(realName), url);
       }
 
       const dbBytes = await dbFile.async('uint8array');
@@ -1822,11 +2271,22 @@
         let frontHtml = tmpl.qfmt.replace(/{{([a-zA-Z0-9_:]+)}}/g, (_, k) => fieldMap[k.split(':').pop()] || '');
         let backHtml = tmpl.afmt.replace('{{FrontSide}}', frontHtml).replace(/{{([a-zA-Z0-9_:]+)}}/g, (_, k) => fieldMap[k.split(':').pop()] || '');
 
-        // Media rewriting
-        const rewrite = (str) => str.replace(/(src|SRC)=(["'])([^"']+)\2/g, (m, attr, q, fn) => {
-          const u = mediaUrlMap[fn] || mediaUrlMap[decodeURIComponent(fn)];
-          return u ? `${attr}=${q}${u}${q}` : m;
-        });
+        // Media rewriting: embed data-filename so images persist & rehydrate across reloads
+        const rewrite = (str) => {
+          if (!str) return '';
+          return str
+            .replace(/(<img\b[^>]*?)\bsrc=(["'])([^"']+)\2([^>]*>)/gi, (full, before, q, fn, after) => {
+              const cleanFn = decodeURIComponent(fn);
+              const u = mediaUrlMap[cleanFn] || mediaUrlMap[fn];
+              const resolvedSrc = u || fn;
+              return `${before}src=${q}${resolvedSrc}${q} data-filename=${q}${cleanFn}${q}${after}`;
+            })
+            .replace(/\[sound:([^\]]+)\]/gi, (match, soundFn) => {
+              const cleanFn = decodeURIComponent(soundFn);
+              const u = mediaUrlMap[cleanFn] || mediaUrlMap[soundFn];
+              return u ? `<audio controls src="${u}"></audio>` : `<audio controls data-filename="${cleanFn}"></audio>`;
+            });
+        };
 
         cards.push({
           id: `card-${cr.id}`,
@@ -1841,6 +2301,40 @@
       db.close();
       if (!cards.length) throw new Error('NO_CARDS');
       return { cards, mediaBlobMap };
+    }
+
+    async function loadApkgFile(file){
+      if (!file) return;
+      deckTitle.textContent = 'Extracting Deck Assets…';
+      deckSub.textContent = `Parsing ${file.name} (media & SQLite collection)…`;
+      deckFileName = file.name;
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        deckFileBuffer = arrayBuffer.slice(0);
+        const { cards, mediaBlobMap } = await parseApkg(arrayBuffer);
+        deckCards = cards;
+        currentIndex = 0;
+        reviewHistory = [];
+        sessionStats = { again: 0, hard: 0, good: 0, easy: 0, startTime: Date.now() };
+
+        const deckBaseName = file.name.replace(/\.(apkg|zip)$/i, '');
+        deckTitle.textContent = deckBaseName;
+        deckSub.textContent = `${cards.length} cards · ${Object.keys(mediaBlobMap).length} media diagrams extracted`;
+
+        // Save to IndexedDB vault
+        const vaultDeckId = 'local-' + deckBaseName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        await saveDeckToVault(vaultDeckId, { title: deckBaseName, fileName: file.name }, cards, mediaBlobMap);
+        offlineBadge.style.display = 'inline-flex';
+
+        renderCard();
+      } catch(err){
+        console.error('Failed to parse local .apkg:', err);
+        alert('Failed to parse .apkg file: ' + (err.message || 'Invalid format'));
+        deckTitle.textContent = 'High-Yield Clinical Physiology & Pharmacology';
+        deckSub.textContent = 'Loaded Clinical Demo Deck';
+        deckCards = [...HIGH_YIELD_DEMO_DECK];
+        renderCard();
+      }
     }
 
     /* =========================================================================
@@ -1872,6 +2366,61 @@
       initGestures();
       initLightbox();
       startTimer();
+
+      // Wire up Local File Picker and Drag & Drop
+      if (localApkgInput){
+        localApkgInput.addEventListener('change', (e) => {
+          const file = e.target.files && e.target.files[0];
+          if (file) loadApkgFile(file);
+          localApkgInput.value = '';
+        });
+      }
+      if (openApkgBtn){
+        openApkgBtn.addEventListener('click', () => {
+          localApkgInput?.click();
+        });
+      }
+      if (openLocalApkgRow){
+        openLocalApkgRow.addEventListener('click', () => {
+          closeSettings();
+          localApkgInput?.click();
+        });
+      }
+
+      // Drag & Drop Deck Import
+      if (dropZoneOverlay){
+        let dragCounter = 0;
+        window.addEventListener('dragenter', (e) => {
+          e.preventDefault();
+          dragCounter++;
+          if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).includes('Files')){
+            dropZoneOverlay.classList.add('drag-over');
+          }
+        });
+        window.addEventListener('dragleave', (e) => {
+          e.preventDefault();
+          dragCounter--;
+          if (dragCounter <= 0){
+            dragCounter = 0;
+            dropZoneOverlay.classList.remove('drag-over');
+          }
+        });
+        window.addEventListener('dragover', (e) => {
+          e.preventDefault();
+        });
+        window.addEventListener('drop', (e) => {
+          e.preventDefault();
+          dragCounter = 0;
+          dropZoneOverlay.classList.remove('drag-over');
+          const files = e.dataTransfer && e.dataTransfer.files;
+          if (files && files.length > 0){
+            const file = files[0];
+            if (file.name.match(/\.(apkg|zip)$/i)){
+              loadApkgFile(file);
+            }
+          }
+        });
+      }
 
       const materialId = getParam('id');
       const isDemo = getParam('deck') === 'demo';

@@ -65,6 +65,13 @@ In recent commit `a8d825e` ("Update index.html"), `index.html` was accidentally 
   - Stores decks and media blobs locally under `mb_synaptic_vault`.
   - Built-in High-Yield Cardiovascular & Pharmacology Demo Deck for immediate zero-config study.
 
+- **Reference Image Viewing & Persistent Media Rehydration**:
+  - Implemented persistent media rehydration across browser restarts via IndexedDB `mb_synaptic_vault` (`media` store).
+  - Added dynamic image resolver (`resolveCardMedia`) that matches clean filenames (e.g. `paste-*.png`, `diagram.jpg`) against in-memory media cache and SQLite collection blobs.
+  - Upgraded **Clinical Diagram Lightbox**: Full pan, drag, wheel zoom, zoom levels (50%–500%), double-click 2.5x toggle, and keyboard shortcuts (`+`, `-`, `0`, `Esc`).
+  - Added **Direct Local `.apkg` File Picker & Drag-and-Drop**: Users can open any `.apkg` or `.zip` deck directly from disk or drag it onto the workstation window.
+  - Built-in High-Yield Clinical Demo Deck equipped with responsive SVG clinical diagrams (coronary blood flow curve, Wolff-Parkinson-White ECG morphology, and Frank-Starling ventricular function curves).
+
 ### 3. `flashmake.html` (Deck Creator & Exporter Overhaul)
 - Added KaTeX CDN and live formula preview container below question and answer fields.
 - Added formatting toolbar chips: `[+ Cloze {{c1::...}}]`, `[+ Math $]`, and `[+ Bold]`.
@@ -86,7 +93,7 @@ In recent commit `a8d825e` ("Update index.html"), `index.html` was accidentally 
 - Complete documentation with architecture topology diagrams, feature breakdowns, keyboard cheat sheet, setup guides, and licensing.
 
 ### 7. Automated Testing Suite (`test-verification.mjs` & `.github/workflows/verify.yml`)
-- 24 automated unit checks validating file integrity, FSRS-5 mathematical stability, KaTeX parsing, and router rules.
+- 36 automated unit checks validating file integrity, FSRS-5 mathematical stability, KaTeX parsing, router rules, media rehydration, and lightbox controls.
 
 ---
 
@@ -109,6 +116,11 @@ node test-verification.mjs
 ✅ PASS: flash.html contains Sovereign IndexedDB vault integration
 ✅ PASS: flash.html contains Clinical Diagram Lightbox Zoom
 ✅ PASS: flash.html contains USMLE 60-Second exam pace countdown
+✅ PASS: flash.html contains local .apkg file picker input
+✅ PASS: flash.html contains persistent media rehydration & resolver
+✅ PASS: flash.html contains drag-and-drop .apkg loader
+✅ PASS: flash.html contains pan & zoom clinical lightbox controls
+✅ PASS: flash.html maintains memory media cache for offline diagrams
 ✅ PASS: flashmake.html loads KaTeX for live formula preview
 ✅ PASS: flashmake.html contains Bulk Import modal
 ✅ PASS: flashmake.html contains Test in Clinical Workstation button
@@ -130,6 +142,6 @@ node test-verification.mjs
 ✅ PASS: KaTeX block math pattern parsed correctly
 
 ==================================================
-🎉 ALL 24 VERIFICATION CHECKS PASSED PERFECTLY!
+🎉 ALL 36 VERIFICATION CHECKS PASSED PERFECTLY!
 ==================================================
 ```

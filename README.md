@@ -1,4 +1,4 @@
-# MedicineBank Data & Neurova Clinical Flashcards Ecosystem
+# MedicineBank Data & Clinical Spaced Repetition Workstation
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Build Status](https://img.shields.io/badge/Deployment-GitHub_Pages-brightgreen)](https://data.medicinebank.org)

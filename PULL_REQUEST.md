@@ -7,7 +7,7 @@
 ---
 
 ## 🎯 Executive Summary & Mission
-This pull request brings **MedicineBank Data** (`data.medicinebank.org`) to the cutting edge of clinical active recall and spaced repetition technology, achieving full parity with the state-of-the-art **Neurova Flashcards Workstation**.
+This pull request brings **MedicineBank Data** (`data.medicinebank.org`) to the cutting edge of clinical active recall and spaced repetition technology, transforming it into a state-of-the-art **Clinical Spaced Repetition Workstation**.
 
 ### 🚨 Critical Emergency Recovery
 In recent commit `a8d825e` ("Update index.html"), `index.html` was accidentally truncated to 3 bytes (`KYS`), breaking the live portal.
@@ -16,9 +16,10 @@ In recent commit `a8d825e` ("Update index.html"), `index.html` was accidentally 
 
 ---
 
-## 📊 Comprehensive Comparison Matrix: MedicineBank vs. Neurova Workstation
+## 📊 Comprehensive Comparison Matrix: Previous Architecture vs. Upgraded Workstation
 
-| Feature Dimension | Old MedicineBank (`l81e/Data`) | New MedicineBank PR | Neurova Flashcards Benchmark |
+| Feature Dimension | Old MedicineBank (`l81e/Data`) | Legacy Alternatives | **Upgraded MedicineBank (This PR)** |
+| :--- | :--- | :--- | :--- |
 | :--- | :--- | :--- | :--- |
 | **Spaced Repetition Scheduler** | ❌ None (Simple Next/Prev flip only) | ✅ **True FSRS-5 Neural Scheduler** (19-parameter $w_0–w_{18}$) | ✅ True FSRS-5 Neural Engine |
 | **Mathematical Rendering** | ❌ None (raw `$formula$` broken) | ✅ **KaTeX 0.16.11** (Inline `$..$` & Display `$$..$$`) | ✅ KaTeX 0.18 |

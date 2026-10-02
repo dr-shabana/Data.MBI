@@ -1,5 +1,5 @@
 -- =============================================================================
--- MedicineBank & Neurova Flashcards — Production Supabase Schema
+-- MedicineBank — Production Supabase Schema & Clinical Flashcards Workstation
 -- Architecture: Clinical Curriculum & Spaced Repetition Workstation
 -- =============================================================================
 

@@ -1,5 +1,5 @@
 // =============================================================================
-// Automated Verification Suite for MedicineBank / Neurova Flashcards PR
+// Automated Verification Suite for MedicineBank Clinical Workstation PR
 // Validates: HTML Structure, JS Syntax, FSRS-5 Math, KaTeX parser, SQL Schema
 // =============================================================================
 
@@ -27,6 +27,10 @@ assert(indexHtml.length > 50000, `index.html is fully restored (${indexHtml.leng
 assert(indexHtml.includes('flashcardsViewerUrl'), 'index.html contains flashcardsViewerUrl');
 assert(!indexHtml.includes('KYS'), 'index.html contains zero corrupted text');
 assert(indexHtml.includes('data.medicinebank.org') || indexHtml.includes('window.location.origin'), 'index.html origin handling is intact');
+assert(indexHtml.includes('adminDashboardOverlay'), 'index.html contains Admin Dashboard modal (adminDashboardOverlay)');
+assert(indexHtml.includes('openAdminDashboard'), 'index.html contains openAdminDashboard controller function');
+assert(indexHtml.includes('dayEmptyAdminBtn'), 'index.html contains dayEmptyAdminBtn for empty days');
+assert(indexHtml.includes('adminCreateSubjectBtn') && indexHtml.includes('adminPublishBtn'), 'index.html contains create subject & upload material controls');
 
 // 2. Verify flash.html
 const flashHtml = fs.readFileSync('flash.html', 'utf-8');
@@ -92,6 +96,22 @@ const textWithoutBlocks = testText.replace(/\$\$([\s\S]*?)\$\$/g, '___BLOCK___')
 const inlineMatches = [...textWithoutBlocks.matchAll(/\$([^\$\n\r]+?)\$/g)].map(m => m[1]);
 assert(inlineMatches.length === 1 && inlineMatches[0].includes('MAP'), 'KaTeX inline math pattern parsed correctly');
 assert(blockMatches.length === 1 && blockMatches[0].includes('CO'), 'KaTeX block math pattern parsed correctly');
+
+// 8. Strict Institutional & Project Anonymity (Zero "Neurova" Mentions)
+const filesToCheck = ['index.html', 'flash.html', 'flashmake.html', '404.html', 'schema.sql', 'PULL_REQUEST.md', 'README.md'];
+let neurovaFound = false;
+for (const file of filesToCheck) {
+  if (fs.existsSync(file)) {
+    const content = fs.readFileSync(file, 'utf-8');
+    if (/neurova/i.test(content)) {
+      neurovaFound = true;
+      assert(false, `Found unexpected mention of Neurova in ${file}`);
+    }
+  }
+}
+if (!neurovaFound) {
+  assert(true, 'Zero mentions of Neurova across entire pull request codebase (strict project independence)');
+}
 
 console.log('\n==================================================');
 if (failures === 0) {

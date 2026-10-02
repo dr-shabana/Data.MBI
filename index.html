@@ -607,6 +607,205 @@
   }
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
 
+  /* ---------- EMPTY DAY ADMIN ACTION ---------- */
+  .day-empty-admin-btn{
+    margin-top:22px;
+    display:inline-flex; align-items:center; gap:8px;
+    padding:11px 26px;
+    background:var(--panel-hi);
+    border:1px solid var(--line);
+    border-radius:9999px;
+    color:var(--text);
+    font-size:0.88rem; font-weight:600;
+    cursor:pointer;
+    transition:all .18s ease;
+  }
+  .day-empty-admin-btn:hover{
+    background:var(--line);
+    border-color:var(--text-dim);
+    transform:translateY(-1px);
+  }
+  .day-empty-admin-btn:active{transform:translateY(0);}
+  .day-empty-admin-btn svg{width:16px; height:16px; flex-shrink:0;}
+
+  /* ---------- ADMIN DASHBOARD MODAL STYLES ---------- */
+  .admin-sheet{
+    max-width:680px;
+    padding:24px;
+    border-radius:16px;
+    background:var(--panel-hi);
+    border:1px solid var(--line);
+    box-shadow:0 24px 60px rgba(0,0,0,0.65);
+    position:relative;
+  }
+  .admin-header{
+    display:flex; align-items:flex-start; justify-content:space-between;
+    gap:16px; margin-bottom:18px; padding-bottom:16px;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .admin-badge-row{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px;
+  }
+  .admin-badge{
+    display:inline-flex; align-items:center; gap:5px;
+    background:var(--accent-glow); color:var(--text);
+    border:1px solid var(--line);
+    padding:3px 9px; border-radius:9999px;
+    font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+  }
+  .admin-badge svg{width:12px; height:12px;}
+  .admin-date-chip, .admin-year-chip{
+    font-size:0.75rem; color:var(--text-dim); background:var(--panel);
+    padding:3px 9px; border-radius:6px; border:1px solid var(--line-soft);
+    font-weight:600;
+  }
+  .admin-title{font-size:1.18rem; font-weight:800; color:var(--text); letter-spacing:-0.2px;}
+  .admin-sub{font-size:0.82rem; color:var(--text-dim); margin-top:4px; line-height:1.5;}
+  .admin-close-btn{
+    background:transparent; border:none; color:var(--text-faint);
+    cursor:pointer; padding:6px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+    transition:color .15s, background .15s;
+  }
+  .admin-close-btn:hover{color:var(--text); background:var(--panel);}
+  .admin-close-btn svg{width:18px; height:18px;}
+
+  /* Admin Tabs */
+  .admin-tabs{
+    display:flex; gap:6px; margin-bottom:20px;
+    background:var(--panel); padding:4px; border-radius:10px; border:1px solid var(--line-soft);
+    overflow-x:auto;
+  }
+  .admin-tab{
+    flex:1; min-width:max-content; display:flex; align-items:center; justify-content:center; gap:6px;
+    padding:9px 12px; border-radius:7px; border:none;
+    background:transparent; color:var(--text-dim); font-size:0.8rem; font-weight:700;
+    cursor:pointer; transition:all .15s ease;
+  }
+  .admin-tab:hover{color:var(--text);}
+  .admin-tab.active{
+    background:var(--panel-hi); color:var(--text); box-shadow:0 1px 4px rgba(0,0,0,0.3); border:1px solid var(--line-soft);
+  }
+  .admin-tab svg{width:14px; height:14px; flex-shrink:0;}
+  .admin-tab-count{
+    background:var(--line); color:var(--text); font-size:0.7rem; font-weight:700;
+    padding:1px 6px; border-radius:9999px;
+  }
+
+  /* Admin Panes */
+  .admin-pane{display:none;}
+  .admin-pane.active{display:block;}
+
+  .admin-form-group{margin-bottom:16px;}
+  .admin-form-group label{
+    display:block; font-size:0.78rem; font-weight:700; color:var(--text-dim); margin-bottom:6px;
+  }
+  .admin-form-group input[type="text"],
+  .admin-form-group input[type="url"],
+  .admin-form-group textarea,
+  .admin-select{
+    width:100%; font-family:inherit; font-size:0.88rem;
+    padding:10px 12px; background:var(--panel);
+    border:1.5px solid var(--line-soft); border-radius:8px; color:var(--text);
+  }
+  .admin-form-group input:focus,
+  .admin-form-group textarea:focus,
+  .admin-select:focus{
+    outline:none; border-color:var(--text-dim); box-shadow:0 0 0 3px var(--accent-glow);
+  }
+  .admin-form-group input::placeholder, .admin-form-group textarea::placeholder{color:var(--text-faint);}
+  .admin-color-picker{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:6px;
+  }
+  .admin-color-swatch{
+    width:28px; height:28px; border-radius:50%; cursor:pointer;
+    border:2px solid transparent; transition:transform .15s, border-color .15s;
+    position:relative;
+  }
+  .admin-color-swatch:hover{transform:scale(1.15);}
+  .admin-color-swatch.active{border-color:var(--text); transform:scale(1.12);}
+  .admin-color-swatch.active::after{
+    content:'✓'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    color:#fff; font-size:0.75rem; font-weight:800; text-shadow:0 1px 2px rgba(0,0,0,0.8);
+  }
+
+  .admin-btn-row{display:flex; gap:10px; margin-top:20px;}
+  .admin-btn-row .modal-btn{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+
+  /* Admin Manage List */
+  .admin-manage-header{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--line-soft);
+  }
+  .admin-manage-summary{font-size:0.82rem; color:var(--text-dim); font-weight:600;}
+  .admin-items-list{display:flex; flex-direction:column; gap:10px; max-height:420px; overflow-y:auto;}
+  .admin-subject-section{
+    background:var(--panel); border:1px solid var(--line-soft); border-radius:10px; overflow:hidden;
+  }
+  .admin-subject-header{
+    display:flex; align-items:center; justify-content:space-between; padding:10px 14px;
+    background:var(--panel-hi); border-bottom:1px solid var(--line-soft);
+  }
+  .admin-subject-title-wrap{display:flex; align-items:center; gap:8px; font-weight:700; font-size:0.86rem; color:var(--text);}
+  .admin-subject-dot{width:10px; height:10px; border-radius:50%; flex-shrink:0;}
+  .admin-subject-del-btn{
+    background:transparent; border:none; color:var(--text-faint); cursor:pointer; font-size:0.75rem;
+    padding:4px 8px; border-radius:6px; display:flex; align-items:center; gap:4px;
+    transition:color .15s, background .15s;
+  }
+  .admin-subject-del-btn:hover{color:var(--err); background:var(--accent-glow);}
+  .admin-material-item{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:10px 14px; border-bottom:1px solid var(--line-soft);
+  }
+  .admin-material-item:last-child{border-bottom:none;}
+  .admin-mat-info{min-width:0; flex:1;}
+  .admin-mat-title-row{display:flex; align-items:center; gap:8px;}
+  .admin-mat-badge{
+    font-size:0.68rem; font-weight:700; text-transform:uppercase; padding:2px 6px; border-radius:4px;
+    background:var(--line); color:var(--text-dim);
+  }
+  .admin-mat-badge.flashcards{background:#065f46; color:#a7f3d0;}
+  .admin-mat-title{font-size:0.84rem; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .admin-mat-meta{font-size:0.72rem; color:var(--text-faint); margin-top:2px; display:flex; align-items:center; gap:6px;}
+  .admin-mat-actions{display:flex; align-items:center; gap:6px; flex-shrink:0;}
+  .admin-act-btn{
+    padding:5px 9px; border-radius:6px; font-size:0.74rem; font-weight:700; border:1px solid var(--line-soft);
+    background:var(--panel-hi); color:var(--text-dim); cursor:pointer; text-decoration:none;
+    display:inline-flex; align-items:center; gap:4px; transition:all .15s;
+  }
+  .admin-act-btn:hover{color:var(--text); border-color:var(--text-dim);}
+  .admin-act-btn.test{background:var(--accent-glow); color:var(--text); border-color:var(--line);}
+  .admin-act-btn.del{color:var(--err);}
+  .admin-act-btn.del:hover{background:rgba(239,68,68,0.1); border-color:var(--err);}
+
+  /* Admin Tools Grid */
+  .admin-tools-grid{display:grid; grid-template-columns:1fr; gap:12px;}
+  .admin-tool-card{
+    display:flex; align-items:center; gap:14px; padding:16px; border-radius:12px;
+    background:var(--panel); border:1px solid var(--line-soft); text-decoration:none; color:inherit;
+    transition:transform .18s, border-color .18s, background .18s;
+  }
+  .admin-tool-card:hover{
+    transform:translateY(-2px); border-color:var(--text-dim); background:var(--panel-hi);
+  }
+  .admin-tool-icon{font-size:1.8rem; flex-shrink:0;}
+  .admin-tool-content{flex:1; min-width:0;}
+  .admin-tool-content h4{font-size:0.92rem; font-weight:700; color:var(--text); margin-bottom:4px;}
+  .admin-tool-content p{font-size:0.76rem; color:var(--text-dim); line-height:1.5;}
+  .admin-tool-arrow{font-size:1.1rem; color:var(--text-faint); transition:transform .18s; margin-left:auto;}
+  .admin-tool-card:hover .admin-tool-arrow{color:var(--text); transform:translateX(3px);}
+  [dir="rtl"] .admin-tool-card:hover .admin-tool-arrow{transform:translateX(-3px);}
+
+  @media (max-width:560px){
+    .admin-sheet{padding:16px; border-radius:12px;}
+    .admin-tab{font-size:0.74rem; padding:8px 8px;}
+    .admin-header{flex-direction:column; gap:10px;}
+    .admin-close-btn{position:absolute; top:14px; right:14px;}
+    [dir="rtl"] .admin-close-btn{right:auto; left:14px;}
+  }
+
   /* ---------- YEAR GATE ---------- */
   .year-gate-overlay{
     position:fixed; inset:0; z-index:200;
@@ -875,6 +1074,195 @@
     <div class="modal-btn-row">
       <button class="modal-btn" id="materialCancelBtn" data-en="Cancel" data-ar="إلغاء">Cancel</button>
       <button class="modal-btn primary" id="materialSaveBtn" data-en="Add" data-ar="إضافة">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN DASHBOARD MODAL -->
+<div class="modal-overlay" id="adminDashboardOverlay">
+  <div class="modal-sheet admin-sheet" id="adminDashboardSheet">
+    <!-- Header -->
+    <div class="admin-header">
+      <div class="admin-header-titles">
+        <div class="admin-badge-row">
+          <span class="admin-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <span data-en="Curriculum Admin" data-ar="إدارة المنهج">Curriculum Admin</span>
+          </span>
+          <span class="admin-date-chip" id="adminContextDate"></span>
+          <span class="admin-year-chip" id="adminContextYear"></span>
+        </div>
+        <h2 class="admin-title" data-en="Admin Dashboard & Content Manager" data-ar="لوحة الأدمن وإدارة المحتوى">Admin Dashboard & Content Manager</h2>
+        <p class="admin-sub" data-en="Add lecture subjects, upload Anki .apkg decks, lecture notes, and manage materials for students." data-ar="إضافة المواد والمحاضرات، رفع كروت أنكي .apkg، مذكرات المحاضرات، وإدارة المحتوى للطلاب.">Add lecture subjects, upload Anki .apkg decks, lecture notes, and manage materials for students.</p>
+      </div>
+      <button type="button" class="admin-close-btn" id="adminDashboardCloseBtn" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="admin-tabs">
+      <button type="button" class="admin-tab active" data-admin-tab="add-subject">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        <span data-en="New Subject" data-ar="مادة جديدة">New Subject</span>
+      </button>
+      <button type="button" class="admin-tab" data-admin-tab="upload-material">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+        <span data-en="Upload Materials" data-ar="رفع داتا وكروت">Upload Materials</span>
+      </button>
+      <button type="button" class="admin-tab" data-admin-tab="manage-day">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+        <span data-en="Day Content" data-ar="محتوى اليوم">Day Content</span>
+        <span class="admin-tab-count" id="adminMaterialsCount">0</span>
+      </button>
+      <button type="button" class="admin-tab" data-admin-tab="quick-tools">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        <span data-en="Studios" data-ar="الأدوات">Studios</span>
+      </button>
+    </div>
+
+    <!-- Tab 1: New Subject -->
+    <div class="admin-pane active" id="adminPaneSubject">
+      <div class="admin-form-group">
+        <label for="adminSubjectName" data-en="Subject / Module Name" data-ar="اسم المادة أو المحاضرة">Subject / Module Name</label>
+        <input type="text" id="adminSubjectName" placeholder="e.g. Cardiology: Heart Failure" data-ph-en="e.g. Cardiology: Heart Failure" data-ph-ar="مثال: باثولوجي: فشل عضلة القلب" />
+        <div class="mfield-hint" data-en="Creates a lecture container for this day so students and admins can attach materials." data-ar="ينشئ خانة محاضرة لليوم المحدد ليتمكن الطلاب والأدمن من إضافة الملفات تحتها.">Creates a lecture container for this day so students and admins can attach materials.</div>
+      </div>
+      <div class="admin-form-group">
+        <label data-en="Subject Badge Color" data-ar="لون تصنيف المادة">Subject Badge Color</label>
+        <div class="admin-color-picker" id="adminSubjectColorPicker"></div>
+      </div>
+      <div class="admin-form-group">
+        <label for="adminSubjectYear" data-en="Academic Year Level" data-ar="السنة الدراسية">Academic Year Level</label>
+        <select id="adminSubjectYear" class="admin-select">
+          <option value="first year" data-en="1st Year" data-ar="الفرقة الأولى">1st Year</option>
+          <option value="second year" data-en="2nd Year" data-ar="الفرقة الثانية">2nd Year</option>
+          <option value="third year" data-en="3rd Year" data-ar="الفرقة الثالثة">3rd Year</option>
+          <option value="fourth year" data-en="4th Year" data-ar="الفرقة الرابعة">4th Year</option>
+          <option value="fifth year" data-en="5th Year" data-ar="الفرقة الخامسة">5th Year</option>
+        </select>
+      </div>
+      <div class="admin-btn-row">
+        <button type="button" class="modal-btn primary" id="adminCreateSubjectBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M12 5v14M5 12h14"/></svg>
+          <span data-en="Create Subject Container" data-ar="إنشاء المادة وتثبيتها">Create Subject Container</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab 2: Upload Materials -->
+    <div class="admin-pane" id="adminPaneUpload">
+      <div class="admin-form-group">
+        <label for="adminTargetSubjectSelect" data-en="Target Subject on this Day" data-ar="المادة المستهدفة لهذا اليوم">Target Subject on this Day</label>
+        <select id="adminTargetSubjectSelect" class="admin-select"></select>
+        <div class="mfield-hint" id="adminNoSubjectsHint" style="display:none; color:var(--err); margin-top:6px;">
+          <span data-en="No subjects exist on this day yet. Please create a subject first in the 'New Subject' tab!" data-ar="لا توجد مواد مضافة لهذا اليوم بعد. يرجى إنشاء مادة أولاً من تبويب 'مادة جديدة'!">No subjects exist on this day yet. Please create a subject first in the 'New Subject' tab!</span>
+        </div>
+      </div>
+
+      <div class="admin-form-group">
+        <label data-en="Content Type" data-ar="نوع المحتوى">Content Type</label>
+        <div class="type-grid" id="adminTypeGrid">
+          <label class="type-opt checked" data-type="flashcards">
+            <input type="radio" name="admin_mat_type" value="flashcards" checked />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="15" height="12" rx="2"/><path d="M7 2h15v12"/></svg>
+            <span data-en="Anki .apkg Deck" data-ar="كروت أنكي .apkg">Anki .apkg Deck</span>
+          </label>
+          <label class="type-opt" data-type="pdf">
+            <input type="radio" name="admin_mat_type" value="pdf" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+            <span data-en="Lecture PDF" data-ar="ملف PDF">Lecture PDF</span>
+          </label>
+          <label class="type-opt" data-type="youtube">
+            <input type="radio" name="admin_mat_type" value="youtube" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none"/></svg>
+            <span data-en="YouTube Video" data-ar="فيديو يوتيوب">YouTube Video</span>
+          </label>
+          <label class="type-opt" data-type="link">
+            <input type="radio" name="admin_mat_type" value="link" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            <span data-en="Web Link / Resource" data-ar="رابط خارجي">Web Link / Resource</span>
+          </label>
+          <label class="type-opt" data-type="spotify">
+            <input type="radio" name="admin_mat_type" value="spotify" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7.5 10.5c3-1 6.5-.7 9 .8M8 14c2.3-.7 4.8-.5 7 .7M8.5 7.3c2.6-.6 5.7-.3 8.3 1.2"/></svg>
+            <span data-en="Podcast / Audio" data-ar="تسجيل صوتي">Podcast / Audio</span>
+          </label>
+          <label class="type-opt" data-type="q">
+            <input type="radio" name="admin_mat_type" value="q" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 2-3 4"/><path d="M12 17h.01"/></svg>
+            <span data-en="Questions & Answers" data-ar="بنك أسئلة">Questions & Answers</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="admin-form-group">
+        <label for="adminMaterialTitle" data-en="Title / Label" data-ar="العنوان">Title / Label</label>
+        <input type="text" id="adminMaterialTitle" placeholder="e.g. Heart Failure Pharmacotherapy Decks" data-ph-en="e.g. Heart Failure Pharmacotherapy Decks" data-ph-ar="مثال: كروت أدوية فشل عضلة القلب" />
+      </div>
+
+      <!-- File Upload Zone for APKG, PDF, etc. -->
+      <div class="admin-form-group" id="adminFileUploadGroup">
+        <label id="adminFileDropLabel" data-en="Deck / Document File (Drag & Drop or Click)" data-ar="ملف الكروت أو المحاضرة (اسحب أو اضغط)">Deck / Document File (Drag & Drop or Click)</label>
+        <div class="upload-drop admin-dropzone" id="adminDropzone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          <div id="adminDropzoneText" data-en="Click or drop .apkg file here (up to 100MB)" data-ar="اضغط أو اسحب ملف .apkg هنا (حتى ١٠٠ ميجا)">Click or drop .apkg file here (up to 100MB)</div>
+        </div>
+        <input type="file" id="adminFileInput" accept=".apkg,.zip" style="display:none;" />
+      </div>
+
+      <!-- URL Input for Link, YouTube, etc. -->
+      <div class="admin-form-group" id="adminUrlInputGroup" style="display:none;">
+        <label for="adminMaterialUrl" data-en="Resource / Video URL" data-ar="رابط الفيديو أو الموقع">Resource / Video URL</label>
+        <input type="url" id="adminMaterialUrl" placeholder="https://..." />
+      </div>
+
+      <div class="admin-form-group">
+        <label for="adminMaterialCaption" data-en="Study Note / Clinical Guidance (Optional)" data-ar="ملاحظات وتوجيهات دراسية (اختياري)">Study Note / Clinical Guidance (Optional)</label>
+        <textarea id="adminMaterialCaption" rows="2" placeholder="e.g. Focus on first-line ACEi vs ARBs titration protocols…" data-ph-en="e.g. Focus on first-line ACEi vs ARBs titration protocols…" data-ph-ar="مثال: ركز على بروتوكول جرعات الـ ACEi مقارنة بالـ ARBs…"></textarea>
+      </div>
+
+      <div class="admin-form-group">
+        <label for="adminUploaderName" data-en="Admin / Contributor Attribution" data-ar="اسم الرافع / المسؤول">Admin / Contributor Attribution</label>
+        <input type="text" id="adminUploaderName" placeholder="e.g. Academic Committee" data-ph-en="e.g. Academic Committee" data-ph-ar="مثال: اللجنة العلمية" />
+      </div>
+
+      <div class="admin-btn-row">
+        <button type="button" class="modal-btn primary" id="adminPublishBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M5 13l4 4L19 7"/></svg>
+          <span data-en="Publish Material to Students" data-ar="نشر المادة للطلاب">Publish Material to Students</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab 3: Manage Day Content -->
+    <div class="admin-pane" id="adminPaneManage">
+      <div class="admin-manage-header">
+        <div class="admin-manage-summary" id="adminDaySummaryText">...</div>
+      </div>
+      <div class="admin-items-list" id="adminManageItemsList"></div>
+    </div>
+
+    <!-- Tab 4: Quick Studios & Helpers -->
+    <div class="admin-pane" id="adminPaneTools">
+      <div class="admin-tools-grid">
+        <a href="/flashmake.html" class="admin-tool-card" target="_blank">
+          <div class="admin-tool-icon">🛠️</div>
+          <div class="admin-tool-content">
+            <h4 data-en="Deck Creator & Exporter Studio" data-ar="استوديو إنشاء وتصدير الكروت">Deck Creator & Exporter Studio</h4>
+            <p data-en="Craft clinical cards, cloze tests, KaTeX formulas, and export verified .apkg decks for instant upload." data-ar="إنشاء كروت سريرية، اختبارات تفريغ، معادلات KaTeX وتصدير حزم .apkg جاهزة للرفع.">Craft clinical cards, cloze tests, KaTeX formulas, and export verified .apkg decks for instant upload.</p>
+          </div>
+          <span class="admin-tool-arrow">→</span>
+        </a>
+        <a href="/flash.html?deck=demo" class="admin-tool-card" target="_blank">
+          <div class="admin-tool-icon">🧠</div>
+          <div class="admin-tool-content">
+            <h4 data-en="Clinical FSRS-5 Workstation" data-ar="منصة المراجعة الذكية FSRS-5">Clinical FSRS-5 Workstation</h4>
+            <p data-en="Test active recall, 4-way swipe gestures, KaTeX rendering, and clinical diagram lightbox zoom." data-ar="اختبار محرك التكرار المتباعد، إيماءات التمرير الرباعية، وتكبير الرسومات التوضيحية.">Test active recall, 4-way swipe gestures, KaTeX rendering, and clinical diagram lightbox zoom.</p>
+          </div>
+          <span class="admin-tool-arrow">→</span>
+        </a>
+      </div>
     </div>
   </div>
 </div>
@@ -1615,8 +2003,8 @@
   }
 
   document.getElementById('adminDashboardBtn').addEventListener('click', () => {
-    showToast(currentLang==='ar' ? 'لوحة الأدمن قريبًا' : 'Admin dashboard coming soon');
     calendarPopup.classList.remove('open');
+    openAdminDashboard();
   });
 
   const langToggleBtn = document.getElementById('langToggleBtn');
@@ -1865,6 +2253,10 @@
           <div class="big-icon">🗓️</div>
           <h3>${currentLang==='ar'?'لسه مفيش حد رفع داتا لليوم ده':'No one uploaded data for this day yet'}</h3>
           <p>${currentLang==='ar'?'لسه مفيش مواد مضافة لليوم ده.':'No subjects have been added for this day yet.'}</p>
+          <button type="button" class="day-empty-admin-btn" id="dayEmptyAdminBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+            <span data-en="Admin dashboard" data-ar="لوحة الأدمن">${currentLang==='ar' ? 'لوحة الأدمن' : 'Admin dashboard'}</span>
+          </button>
         </div>
       `;
     }
@@ -1988,6 +2380,13 @@
         window.location.href = flashcardsViewerUrl(row.dataset.flashcardsOpen);
       });
     });
+    const emptyAdminBtn = cardEl.querySelector('#dayEmptyAdminBtn');
+    if (emptyAdminBtn){
+      emptyAdminBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openAdminDashboard('add-subject');
+      });
+    }
   }
 
   function renderDay(){
@@ -2357,6 +2756,498 @@
     closeMaterialModal();
     renderDay();
     showToast(wasEditing ? (currentLang==='ar' ? 'تم الحفظ' : 'Saved') : (currentLang==='ar' ? 'تمت الإضافة' : 'Added'));
+  });
+
+  /* ---------------- ADMIN DASHBOARD CONTROLLER ---------------- */
+  const adminDashboardOverlay = document.getElementById('adminDashboardOverlay');
+  const adminContextDate = document.getElementById('adminContextDate');
+  const adminContextYear = document.getElementById('adminContextYear');
+  const adminSubjectName = document.getElementById('adminSubjectName');
+  const adminSubjectColorPicker = document.getElementById('adminSubjectColorPicker');
+  const adminSubjectYear = document.getElementById('adminSubjectYear');
+  const adminCreateSubjectBtn = document.getElementById('adminCreateSubjectBtn');
+  const adminTargetSubjectSelect = document.getElementById('adminTargetSubjectSelect');
+  const adminNoSubjectsHint = document.getElementById('adminNoSubjectsHint');
+  const adminMaterialTitle = document.getElementById('adminMaterialTitle');
+  const adminFileUploadGroup = document.getElementById('adminFileUploadGroup');
+  const adminFileDropLabel = document.getElementById('adminFileDropLabel');
+  const adminDropzone = document.getElementById('adminDropzone');
+  const adminDropzoneText = document.getElementById('adminDropzoneText');
+  const adminFileInput = document.getElementById('adminFileInput');
+  const adminUrlInputGroup = document.getElementById('adminUrlInputGroup');
+  const adminMaterialUrl = document.getElementById('adminMaterialUrl');
+  const adminMaterialCaption = document.getElementById('adminMaterialCaption');
+  const adminUploaderName = document.getElementById('adminUploaderName');
+  const adminPublishBtn = document.getElementById('adminPublishBtn');
+  const adminManageItemsList = document.getElementById('adminManageItemsList');
+  const adminDaySummaryText = document.getElementById('adminDaySummaryText');
+  const adminMaterialsCount = document.getElementById('adminMaterialsCount');
+
+  let selectedAdminColor = SUBJECT_COLORS[0];
+  let selectedAdminType = 'flashcards';
+  let adminSelectedFile = null;
+
+  function renderAdminColorPicker(){
+    adminSubjectColorPicker.innerHTML = '';
+    SUBJECT_COLORS.forEach(c => {
+      const swatch = document.createElement('div');
+      swatch.className = `admin-color-swatch ${c === selectedAdminColor ? 'active' : ''}`;
+      swatch.style.background = c;
+      swatch.title = c;
+      swatch.addEventListener('click', () => {
+        selectedAdminColor = c;
+        adminSubjectColorPicker.querySelectorAll('.admin-color-swatch').forEach(s => s.classList.remove('active'));
+        swatch.classList.add('active');
+      });
+      adminSubjectColorPicker.appendChild(swatch);
+    });
+  }
+
+  function switchAdminTab(tabKey){
+    document.querySelectorAll('.admin-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.adminTab === tabKey);
+    });
+    document.querySelectorAll('.admin-pane').forEach(p => p.classList.remove('active'));
+    if (tabKey === 'add-subject') document.getElementById('adminPaneSubject').classList.add('active');
+    else if (tabKey === 'upload-material') document.getElementById('adminPaneUpload').classList.add('active');
+    else if (tabKey === 'manage-day') document.getElementById('adminPaneManage').classList.add('active');
+    else if (tabKey === 'quick-tools') document.getElementById('adminPaneTools').classList.add('active');
+  }
+
+  document.querySelectorAll('.admin-tab').forEach(t => {
+    t.addEventListener('click', () => switchAdminTab(t.dataset.adminTab));
+  });
+
+  // Material type selection in Admin
+  document.querySelectorAll('#adminTypeGrid .type-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('#adminTypeGrid .type-opt').forEach(o => o.classList.remove('checked'));
+      opt.classList.add('checked');
+      const radio = opt.querySelector('input');
+      if (radio) radio.checked = true;
+      selectedAdminType = opt.dataset.type;
+
+      adminSelectedFile = null;
+      adminFileInput.value = '';
+      adminDropzone.classList.remove('has-file');
+
+      if (selectedAdminType === 'flashcards'){
+        adminFileUploadGroup.style.display = 'block';
+        adminUrlInputGroup.style.display = 'none';
+        adminFileInput.accept = '.apkg,.zip';
+        adminFileDropLabel.textContent = currentLang==='ar' ? 'ملف كروت أنكي .apkg (اسحب أو اضغط)' : 'Anki .apkg Deck File (Drag & Drop or Click)';
+        adminDropzoneText.textContent = currentLang==='ar' ? 'اضغط أو اسحب ملف .apkg هنا (حتى ١٠٠ ميجا)' : 'Click or drop .apkg file here (up to 100MB)';
+      } else if (selectedAdminType === 'pdf' || selectedAdminType === 'q'){
+        adminFileUploadGroup.style.display = 'block';
+        adminUrlInputGroup.style.display = 'none';
+        adminFileInput.accept = '.pdf';
+        adminFileDropLabel.textContent = currentLang==='ar' ? 'ملف المحاضرة PDF (اسحب أو اضغط)' : 'Lecture PDF File (Drag & Drop or Click)';
+        adminDropzoneText.textContent = currentLang==='ar' ? 'اضغط أو اسحب ملف PDF هنا (حتى ٢٠ ميجا)' : 'Click or drop PDF file here (up to 20MB)';
+      } else {
+        adminFileUploadGroup.style.display = 'none';
+        adminUrlInputGroup.style.display = 'block';
+      }
+    });
+  });
+
+  // Admin File Dropzone
+  adminDropzone.addEventListener('click', () => adminFileInput.click());
+  adminDropzone.addEventListener('dragover', (e) => { e.preventDefault(); adminDropzone.style.borderColor = 'var(--text)'; });
+  adminDropzone.addEventListener('dragleave', () => { adminDropzone.style.borderColor = ''; });
+  adminDropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    adminDropzone.style.borderColor = '';
+    if (e.dataTransfer.files && e.dataTransfer.files.length){
+      handleAdminFileSelected(e.dataTransfer.files[0]);
+    }
+  });
+  adminFileInput.addEventListener('change', () => {
+    if (adminFileInput.files && adminFileInput.files.length){
+      handleAdminFileSelected(adminFileInput.files[0]);
+    }
+  });
+
+  function handleAdminFileSelected(file){
+    if (!file) return;
+    if (selectedAdminType === 'flashcards'){
+      if (!/\.(apkg|zip)$/i.test(file.name)){
+        showToast(currentLang==='ar' ? 'من فضلك اختر ملف كروت بصيغة .apkg' : 'Please select an .apkg file');
+        return;
+      }
+      if (file.size > MAX_FLASH_UPLOAD_BYTES){
+        showToast(currentLang==='ar' ? 'الملف كبير جدًا (الحد الأقصى ١٠٠ ميجا)' : 'File exceeds 100MB limit');
+        return;
+      }
+    } else if (selectedAdminType === 'pdf' || selectedAdminType === 'q'){
+      if (file.size > MAX_UPLOAD_BYTES){
+        showToast(currentLang==='ar' ? 'الملف كبير جدًا (الحد الأقصى ٢٠ ميجا)' : 'File exceeds 20MB limit');
+        return;
+      }
+    }
+    adminSelectedFile = file;
+    const mbSize = (file.size / (1024 * 1024)).toFixed(1);
+    adminDropzoneText.textContent = `✓ ${file.name} (${mbSize} MB)`;
+    adminDropzone.classList.add('has-file');
+    if (!adminMaterialTitle.value.trim()){
+      adminMaterialTitle.value = file.name.replace(/\.[^.]+$/, '');
+    }
+  }
+
+  function renderAdminManageList(){
+    const subjects = currentDayData.subjects || [];
+    let totalItems = 0;
+    subjects.forEach(s => totalItems += (s.materials ? s.materials.length : 0));
+
+    adminMaterialsCount.textContent = totalItems;
+    adminDaySummaryText.textContent = currentLang === 'ar'
+      ? `${subjects.length} مواد مسجلة · ${totalItems} ملفات ومصادر متاحة`
+      : `${subjects.length} subjects · ${totalItems} materials published`;
+
+    if (subjects.length === 0){
+      adminManageItemsList.innerHTML = `
+        <div class="mini-loading-row" style="padding:32px 0;">
+          ${currentLang==='ar' ? 'لا توجد أي مواد أو ملفات مضافة لهذا اليوم بعد. ابدأ بإضافة مادة جديدة!' : 'No subjects or materials added for this day yet. Start by creating a subject!'}
+        </div>
+      `;
+      return;
+    }
+
+    let html = '';
+    subjects.forEach(s => {
+      const color = s.color || SUBJECT_COLORS[0];
+      const count = s.materials ? s.materials.length : 0;
+      let materialsHtml = '';
+
+      if (count === 0){
+        materialsHtml = `
+          <div style="padding:12px 14px; font-size:0.78rem; color:var(--text-faint);">
+            ${currentLang==='ar' ? 'لا توجد ملفات مرفوعة لهذه المادة بعد.' : 'No materials uploaded under this subject yet.'}
+          </div>
+        `;
+      } else {
+        materialsHtml = s.materials.map(m => {
+          const isFlash = m.type === 'flashcards';
+          const badgeClass = isFlash ? 'flashcards' : '';
+          const meta = TYPE_META[m.type] || TYPE_META.pdf;
+          const badgeLabel = currentLang === 'ar' ? meta.labelAr : meta.labelEn;
+          const uploader = m.uploaderName ? `<span style="opacity:0.6;">by ${escapeHtml(m.uploaderName)}</span>` : '';
+          const testBtn = isFlash
+            ? `<a class="admin-act-btn test" href="${flashcardsViewerUrl(m.id)}" target="_blank">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>${currentLang==='ar' ? 'اختبار' : 'Test'}</span>
+               </a>`
+            : '';
+          const openBtn = m.url
+            ? `<a class="admin-act-btn" href="${escapeHtml(m.url)}" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+                <span>${currentLang==='ar' ? 'فتح' : 'Open'}</span>
+               </a>`
+            : '';
+
+          return `
+            <div class="admin-material-item">
+              <div class="admin-mat-info">
+                <div class="admin-mat-title-row">
+                  <span class="admin-mat-badge ${badgeClass}">${badgeLabel}</span>
+                  <span class="admin-mat-title">${escapeHtml(m.title)}</span>
+                </div>
+                <div class="admin-mat-meta">
+                  ${m.fileName ? `<span>${escapeHtml(m.fileName)}</span> · ` : ''}
+                  ${uploader}
+                </div>
+              </div>
+              <div class="admin-mat-actions">
+                ${testBtn}
+                ${openBtn}
+                <button type="button" class="admin-act-btn del" data-del-material="${m.id}" title="${currentLang==='ar'?'حذف':'Delete'}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      html += `
+        <div class="admin-subject-section">
+          <div class="admin-subject-header">
+            <div class="admin-subject-title-wrap">
+              <div class="admin-subject-dot" style="background:${escapeHtml(color)};"></div>
+              <span>${escapeHtml(s.name)}</span>
+              <span style="font-size:0.75rem; color:var(--text-faint); font-weight:normal;">(${count})</span>
+            </div>
+            <button type="button" class="admin-subject-del-btn" data-del-subject="${s.id}" title="${currentLang==='ar'?'حذف المادة':'Delete Subject'}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+              <span>${currentLang==='ar'?'حذف المادة':'Delete'}</span>
+            </button>
+          </div>
+          ${materialsHtml}
+        </div>
+      `;
+    });
+
+    adminManageItemsList.innerHTML = html;
+
+    // Bind delete buttons
+    adminManageItemsList.querySelectorAll('[data-del-material]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const matId = btn.dataset.delMaterial;
+        const confirmed = confirm(currentLang === 'ar' ? 'هل تريد بالتأكيد حذف هذا الملف/الكروت؟' : 'Are you sure you want to delete this material?');
+        if (!confirmed) return;
+        btn.disabled = true;
+        const { error } = await supabase.from('materials').delete().eq('id', matId);
+        if (error){
+          console.error(error);
+          showToast(currentLang==='ar' ? 'فشل الحذف' : 'Failed to delete');
+          btn.disabled = false;
+          return;
+        }
+        await refreshDayFromDatabase();
+        renderAdminManageList();
+        populateAdminSubjectSelect();
+        showToast(currentLang==='ar' ? 'تم الحذف' : 'Deleted successfully');
+      });
+    });
+
+    adminManageItemsList.querySelectorAll('[data-del-subject]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const subjId = btn.dataset.delSubject;
+        const confirmed = confirm(currentLang === 'ar' ? 'هل تريد بالتأكيد حذف هذه المادة وجميع ملفاتها؟' : 'Are you sure you want to delete this subject and all its materials?');
+        if (!confirmed) return;
+        btn.disabled = true;
+        const { error } = await supabase.from('lectures').delete().eq('id', subjId);
+        if (error){
+          console.error(error);
+          showToast(currentLang==='ar' ? 'فشل حذف المادة' : 'Failed to delete subject');
+          btn.disabled = false;
+          return;
+        }
+        await refreshDayFromDatabase();
+        renderAdminManageList();
+        populateAdminSubjectSelect();
+        showToast(currentLang==='ar' ? 'تم حذف المادة' : 'Subject deleted');
+      });
+    });
+  }
+
+  function populateAdminSubjectSelect(preferredId){
+    const subjects = currentDayData.subjects || [];
+    adminTargetSubjectSelect.innerHTML = '';
+    if (subjects.length === 0){
+      adminTargetSubjectSelect.disabled = true;
+      adminNoSubjectsHint.style.display = 'block';
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = currentLang === 'ar' ? 'لا توجد مواد مضافة لهذا اليوم' : 'No subjects on this day yet';
+      adminTargetSubjectSelect.appendChild(opt);
+    } else {
+      adminTargetSubjectSelect.disabled = false;
+      adminNoSubjectsHint.style.display = 'none';
+      subjects.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = s.name;
+        if (preferredId && s.id === preferredId) opt.selected = true;
+        adminTargetSubjectSelect.appendChild(opt);
+      });
+    }
+  }
+
+  async function refreshDayFromDatabase(){
+    const dateKey = fmtKey(viewDate);
+    dayCache.delete(dateKey);
+    try { localStorage.removeItem(lsKeyFor(dateKey)); } catch(e){}
+    const fresh = await fetchDaySubjects(viewDate);
+    currentDayData = { subjects: fresh };
+    dayCache.set(dateKey, fresh);
+    lsSetDay(dateKey, fresh);
+    renderDay();
+  }
+
+  function openAdminDashboard(initialTab){
+    const days = currentLang === 'ar' ? DAYS_AR : DAYS_EN;
+    adminContextDate.textContent = `${days[viewDate.getDay()]}, ${fmtDMY(viewDate)}`;
+    adminContextYear.textContent = currentYear || 'first year';
+    adminSubjectYear.value = currentYear || 'first year';
+    adminUploaderName.value = getDisplayName() || '';
+
+    renderAdminColorPicker();
+    populateAdminSubjectSelect();
+    renderAdminManageList();
+
+    const subjects = currentDayData.subjects || [];
+    if (initialTab){
+      switchAdminTab(initialTab);
+    } else if (subjects.length === 0){
+      switchAdminTab('add-subject');
+    } else {
+      switchAdminTab('upload-material');
+    }
+
+    adminDashboardOverlay.classList.add('open');
+  }
+
+  function closeAdminDashboard(){
+    adminDashboardOverlay.classList.remove('open');
+  }
+
+  document.getElementById('adminDashboardCloseBtn').addEventListener('click', closeAdminDashboard);
+  adminDashboardOverlay.addEventListener('click', (e) => {
+    if (e.target === adminDashboardOverlay) closeAdminDashboard();
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && adminDashboardOverlay.classList.contains('open')){
+      closeAdminDashboard();
+    }
+  });
+
+  // Create Subject
+  adminCreateSubjectBtn.addEventListener('click', async () => {
+    const name = adminSubjectName.value.trim();
+    if (!name){
+      showToast(currentLang === 'ar' ? 'من فضلك اكتب اسم المادة' : 'Please enter subject name');
+      adminSubjectName.focus();
+      return;
+    }
+
+    const year = adminSubjectYear.value || currentYear || 'first year';
+    const color = selectedAdminColor || SUBJECT_COLORS[0];
+    const dateKey = fmtKey(viewDate);
+    const uploader = adminUploaderName.value.trim() || getDisplayName() || 'Admin';
+
+    adminCreateSubjectBtn.disabled = true;
+    adminCreateSubjectBtn.innerHTML = `<span>${currentLang==='ar'?'جاري الإنشاء…':'Creating…'}</span>`;
+
+    const { data: newSubj, error } = await supabase
+      .from('lectures')
+      .insert({
+        name,
+        color,
+        date: dateKey,
+        year_of_view: year,
+        created_by_name: uploader
+      })
+      .select()
+      .single();
+
+    adminCreateSubjectBtn.disabled = false;
+    adminCreateSubjectBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M12 5v14M5 12h14"/></svg>
+      <span>${currentLang==='ar'?'إنشاء المادة وتثبيتها':'Create Subject Container'}</span>
+    `;
+
+    if (error){
+      console.error(error);
+      showToast(currentLang === 'ar' ? 'حدث خطأ في إنشاء المادة' : 'Error creating subject');
+      return;
+    }
+
+    adminSubjectName.value = '';
+    await refreshDayFromDatabase();
+    populateAdminSubjectSelect(newSubj.id);
+    renderAdminManageList();
+    switchAdminTab('upload-material');
+    showToast(currentLang === 'ar' ? 'تم إنشاء المادة بنجاح' : 'Subject created successfully');
+  });
+
+  // Publish Material from Admin
+  adminPublishBtn.addEventListener('click', async () => {
+    const targetSubjectId = adminTargetSubjectSelect.value;
+    if (!targetSubjectId){
+      showToast(currentLang === 'ar' ? 'من فضلك اختر المادة أو أنشئ مادة جديدة أولاً' : 'Please select or create a subject first');
+      switchAdminTab('add-subject');
+      return;
+    }
+
+    const customTitle = adminMaterialTitle.value.trim();
+    const title = customTitle || autoTitleFor(selectedAdminType);
+    const caption = adminMaterialCaption.value.trim();
+    const uploader = adminUploaderName.value.trim() || getDisplayName() || null;
+    if (uploader) setDisplayName(uploader);
+
+    let fileUrl = null;
+    let fileName = null;
+    let kind = 'upload';
+
+    if (selectedAdminType === 'flashcards' || selectedAdminType === 'pdf' || selectedAdminType === 'q'){
+      kind = 'upload';
+      if (!adminSelectedFile){
+        showToast(currentLang === 'ar' ? 'من فضلك اختر ملفًا للرفع' : 'Please select a file to upload');
+        return;
+      }
+      adminPublishBtn.disabled = true;
+      adminPublishBtn.innerHTML = `<span>${currentLang==='ar'?'جاري الرفع والنشر…':'Uploading & Publishing…'}</span>`;
+
+      const ext = adminSelectedFile.name.split('.').pop();
+      const storagePath = `${targetSubjectId}/${uid()}-${Date.now()}.${ext}`;
+
+      const { error: upErr } = await supabase.storage.from(MATERIALS_BUCKET).upload(storagePath, adminSelectedFile, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+      if (upErr){
+        console.error(upErr);
+        adminPublishBtn.disabled = false;
+        adminPublishBtn.innerHTML = `<span>${currentLang==='ar'?'نشر المادة للطلاب':'Publish Material to Students'}</span>`;
+        showToast(currentLang === 'ar' ? 'فشل رفع الملف إلى السيرفر' : 'Failed to upload file');
+        return;
+      }
+
+      const { data: pub } = supabase.storage.from(MATERIALS_BUCKET).getPublicUrl(storagePath);
+      fileUrl = pub.publicUrl;
+      fileName = adminSelectedFile.name;
+    } else {
+      kind = 'link';
+      fileUrl = adminMaterialUrl.value.trim();
+      if (!fileUrl){
+        showToast(currentLang === 'ar' ? 'من فضلك أدخل رابط صالح' : 'Please enter a valid URL');
+        adminMaterialUrl.focus();
+        return;
+      }
+    }
+
+    adminPublishBtn.disabled = true;
+    adminPublishBtn.innerHTML = `<span>${currentLang==='ar'?'جاري الحفظ…':'Saving…'}</span>`;
+
+    const { error: insertErr } = await supabase.from('materials').insert({
+      lecture_id: targetSubjectId,
+      type: selectedAdminType,
+      kind,
+      title,
+      url: fileUrl,
+      file_name: fileName,
+      caption: caption || null,
+      uploaded_by: uploader
+    });
+
+    adminPublishBtn.disabled = false;
+    adminPublishBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M5 13l4 4L19 7"/></svg>
+      <span>${currentLang==='ar'?'نشر المادة للطلاب':'Publish Material to Students'}</span>
+    `;
+
+    if (insertErr){
+      console.error(insertErr);
+      showToast(currentLang === 'ar' ? 'حدث خطأ أثناء حفظ المادة' : 'Error saving material');
+      return;
+    }
+
+    // Reset upload fields
+    adminSelectedFile = null;
+    adminFileInput.value = '';
+    adminMaterialTitle.value = '';
+    adminMaterialCaption.value = '';
+    adminMaterialUrl.value = '';
+    adminDropzone.classList.remove('has-file');
+    adminDropzoneText.textContent = selectedAdminType === 'flashcards'
+      ? (currentLang==='ar' ? 'اضغط أو اسحب ملف .apkg هنا (حتى ١٠٠ ميجا)' : 'Click or drop .apkg file here (up to 100MB)')
+      : (currentLang==='ar' ? 'اضغط أو اسحب ملف PDF هنا (حتى ٢٠ ميجا)' : 'Click or drop PDF file here (up to 20MB)');
+
+    await refreshDayFromDatabase();
+    renderAdminManageList();
+    switchAdminTab('manage-day');
+    showToast(currentLang === 'ar' ? 'تم نشر المحتوى بنجاح' : 'Material published successfully!');
   });
 
   /* ---------------- init ---------------- */

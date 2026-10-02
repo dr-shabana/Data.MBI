@@ -85,12 +85,40 @@ CREATE POLICY "Public lectures read" ON public.lectures FOR SELECT USING (true);
 DROP POLICY IF EXISTS "Public materials read" ON public.materials;
 CREATE POLICY "Public materials read" ON public.materials FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Public reviews read" ON public.flashcard_reviews;
+CREATE POLICY "Public reviews read" ON public.flashcard_reviews FOR SELECT USING (true);
+
 -- Anonymous / Authenticated Upload & Insert Policies
 DROP POLICY IF EXISTS "Public materials insert" ON public.materials;
 CREATE POLICY "Public materials insert" ON public.materials FOR INSERT WITH CHECK (true);
 
 DROP POLICY IF EXISTS "Public lectures insert" ON public.lectures;
 CREATE POLICY "Public lectures insert" ON public.lectures FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public reviews insert" ON public.flashcard_reviews;
+CREATE POLICY "Public reviews insert" ON public.flashcard_reviews FOR INSERT WITH CHECK (true);
+
+-- Management (Update & Delete) Policies for Admin Dashboard
+DROP POLICY IF EXISTS "Public materials update" ON public.materials;
+CREATE POLICY "Public materials update" ON public.materials FOR UPDATE USING (true);
+
+DROP POLICY IF EXISTS "Public materials delete" ON public.materials;
+CREATE POLICY "Public materials delete" ON public.materials FOR DELETE USING (true);
+
+DROP POLICY IF EXISTS "Public lectures update" ON public.lectures;
+CREATE POLICY "Public lectures update" ON public.lectures FOR UPDATE USING (true);
+
+DROP POLICY IF EXISTS "Public lectures delete" ON public.lectures;
+CREATE POLICY "Public lectures delete" ON public.lectures FOR DELETE USING (true);
+
+-- 8. Safe Constraint Update (For existing Supabase instances)
+DO $$ BEGIN
+  ALTER TABLE public.materials DROP CONSTRAINT IF EXISTS materials_type_check;
+  ALTER TABLE public.materials ADD CONSTRAINT materials_type_check 
+    CHECK (type = ANY (ARRAY['pdf'::text, 'q'::text, 'flashcards'::text, 'spotify'::text, 'youtube'::text, 'link'::text]));
+EXCEPTION
+  WHEN undefined_table THEN NULL;
+END $$;
 
 -- Storage bucket initialization instruction:
 -- Ensure bucket 'materials' exists in Supabase Storage with public read access enabled.

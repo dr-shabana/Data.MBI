@@ -4,17 +4,29 @@
 <meta charset="UTF-8" />
 <title>Redirecting…</title>
 <script>
-  // GitHub Pages serves this file for any path it can't find (e.g. /11-9-2026).
-  // We capture that path and bounce to index.html, carrying the original path
-  // in a query string so index.html can restore it after it loads.
-  var path = window.location.pathname + window.location.search;
-  sessionStorage.setItem('mb_redirect_path', path);
-  window.location.replace(
-    window.location.origin + '/index.html'
-  );
+  (function(){
+    var path = window.location.pathname;
+    var search = window.location.search;
+    var hash = window.location.hash || '';
+
+    // Route clean URLs to their corresponding HTML files on GitHub Pages
+    if (path === '/flash' || path === '/flash/' || path.startsWith('/flash?')){
+      window.location.replace(window.location.origin + '/flash.html' + search + hash);
+      return;
+    }
+    if (path === '/flashmake' || path === '/flashmake/' || path.startsWith('/flashmake?')){
+      window.location.replace(window.location.origin + '/flashmake.html' + search + hash);
+      return;
+    }
+
+    // Capture date routes (e.g. /11-9-2026) and bounce to index.html
+    var full = path + search + hash;
+    sessionStorage.setItem('mb_redirect_path', full);
+    window.location.replace(window.location.origin + '/index.html');
+  })();
 </script>
 </head>
 <body>
-  Redirecting…
+  Redirecting to MedicineBank…
 </body>
 </html>

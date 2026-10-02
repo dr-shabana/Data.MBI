@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.2/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/sql-wasm.js"></script>
@@ -515,6 +517,21 @@
       <button class="modal-btn danger" id="confirmOkBtn" data-en="Delete" data-ar="حذف">Delete</button>
     </div>
   </div>
+<!-- BULK IMPORT MODAL -->
+<div class="modal-overlay" id="bulkModalOverlay">
+  <div class="modal-sheet" style="max-width:540px;">
+    <div class="modal-title" data-en="Bulk Import Cards" data-ar="استيراد بطاقات متعددة">Bulk Import Cards</div>
+    <p style="font-size:0.75rem; color:var(--text-faint); margin-bottom:12px;" data-en="Paste cards (one per line). Separate question and answer with a TAB or semicolon (;)." data-ar="الصق البطاقات (واحدة في كل سطر). افصل بين السؤال والإجابة بـ TAB أو فاصلة منقوطة (;).">
+      Paste cards (one per line). Separate question and answer with a TAB or semicolon (;).
+    </p>
+    <div class="mfield">
+      <textarea id="bulkImportTextarea" rows="8" placeholder="What is MAP?	MAP = DP + 1/3(SP - DP)&#10;Wolff-Parkinson-White;Delta wave with short PR interval" style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; width:100%; border-radius:10px; background:var(--bg); border:1px solid var(--line); color:var(--text); padding:10px;"></textarea>
+    </div>
+    <div class="modal-btn-row">
+      <button class="modal-btn" id="bulkCancelBtn" data-en="Cancel" data-ar="إلغاء">Cancel</button>
+      <button class="modal-btn primary" id="bulkSaveBtn" data-en="Import Cards" data-ar="استيراد البطاقات">Import Cards</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -875,10 +892,16 @@
     }
 
     html += `
-      <button type="button" class="add-card-btn" id="addCardBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-        <span>${currentLang==='ar'?'بطاقة جديدة':'New card'}</span>
-      </button>
+      <div style="display:flex; gap:10px; margin-top:8px;">
+        <button type="button" class="add-card-btn" id="addCardBtn" style="flex:1;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          <span>${currentLang==='ar'?'بطاقة جديدة':'New card'}</span>
+        </button>
+        <button type="button" class="add-card-btn" id="bulkImportBtn" style="flex:1; background:var(--panel-hi); border:1px solid var(--line);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+          <span>${currentLang==='ar'?'استيراد متعدد (TSV/CSV)':'Bulk Import (TSV/CSV)'}</span>
+        </button>
+      </div>
     `;
 
     html += `<div id="cardEditorSlot"></div>`;
@@ -924,9 +947,75 @@
     });
 
     document.getElementById('addCardBtn').addEventListener('click', () => openCardEditor(null));
+    const bulkBtn = document.getElementById('bulkImportBtn');
+    if (bulkBtn) bulkBtn.addEventListener('click', () => openBulkModal(deck));
+
     document.getElementById('footerBackBtn').addEventListener('click', () => { activeDeckId = null; goStep('decks'); });
     document.getElementById('footerNextBtn').addEventListener('click', () => goStep('export'));
   }
+
+  const bulkModalOverlay = document.getElementById('bulkModalOverlay');
+  const bulkImportTextarea = document.getElementById('bulkImportTextarea');
+  let bulkTargetDeck = null;
+
+  function openBulkModal(deck){
+    bulkTargetDeck = deck;
+    bulkImportTextarea.value = '';
+    bulkModalOverlay.classList.add('open');
+    setTimeout(() => bulkImportTextarea.focus(), 50);
+  }
+  function closeBulkModal(){
+    bulkModalOverlay.classList.remove('open');
+  }
+  document.getElementById('bulkCancelBtn').addEventListener('click', closeBulkModal);
+  bulkModalOverlay.addEventListener('click', (e) => { if (e.target === bulkModalOverlay) closeBulkModal(); });
+
+  document.getElementById('bulkSaveBtn').addEventListener('click', () => {
+    if (!bulkTargetDeck) return;
+    const text = bulkImportTextarea.value.trim();
+    if (!text){
+      showToast(currentLang==='ar' ? 'من فضلك الصق البطاقات' : 'Please paste cards');
+      return;
+    }
+    const lines = text.split('\n');
+    let count = 0;
+    for (const raw of lines){
+      const line = raw.trim();
+      if (!line) continue;
+      let q = '', a = '';
+      if (line.includes('\t')){
+        const parts = line.split('\t');
+        q = parts[0].trim();
+        a = parts.slice(1).join('\t').trim();
+      } else if (line.includes(';')){
+        const parts = line.split(';');
+        q = parts[0].trim();
+        a = parts.slice(1).join(';').trim();
+      } else if (line.includes(' - ')){
+        const parts = line.split(' - ');
+        q = parts[0].trim();
+        a = parts.slice(1).join(' - ').trim();
+      } else {
+        q = line;
+        a = 'Review';
+      }
+      if (q){
+        bulkTargetDeck.cards.push({
+          id: uid(),
+          front: q,
+          back: a,
+          imageFile: null,
+          imageDataUrl: null,
+          imageName: null
+        });
+        count++;
+      }
+    }
+    closeBulkModal();
+    updateTabsState();
+    renderStep();
+    showToast(currentLang==='ar' ? `تم استيراد ${count} بطاقة` : `Imported ${count} cards`);
+  });
 
   function plainTextPreview(html){
     const div = document.createElement('div');
@@ -952,15 +1041,36 @@
       <div class="panel" id="cardEditorPanel">
         <div class="panel-title">${existing ? (currentLang==='ar'?'تعديل البطاقة':'Edit card') : (currentLang==='ar'?'بطاقة جديدة':'New card')}</div>
         <div class="mfield">
-          <label>${currentLang==='ar'?'السؤال (وش البطاقة)':'Question (front)'}</label>
-          <textarea id="cardFrontInput" placeholder="${currentLang==='ar'?'اكتب السؤال هنا…':'Type the question here…'}">${escapeHtml(existing ? existing.front : '')}</textarea>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <label style="margin-bottom:0;">${currentLang==='ar'?'السؤال (وش البطاقة)':'Question (front)'}</label>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="tool-chip" id="frontAddCloze" style="font-size:0.7rem; padding:2px 7px; border-radius:6px; background:var(--panel-hi); border:1px solid var(--line); color:var(--accent); cursor:pointer;">+ Cloze</button>
+              <button type="button" class="tool-chip" id="frontAddMath" style="font-size:0.7rem; padding:2px 7px; border-radius:6px; background:var(--panel-hi); border:1px solid var(--line); color:var(--text); cursor:pointer;">+ Math $</button>
+              <button type="button" class="tool-chip" id="frontAddBold" style="font-size:0.7rem; padding:2px 7px; border-radius:6px; background:var(--panel-hi); border:1px solid var(--line); color:var(--text); cursor:pointer;">+ Bold</button>
+            </div>
+          </div>
+          <textarea id="cardFrontInput" placeholder="${currentLang==='ar'?'اكتب السؤال هنا… (يدعم KaTeX مثل $MAP$)':'Type the question here… (supports KaTeX $formula$)'}">${escapeHtml(existing ? existing.front : '')}</textarea>
           <div class="mfield-err" id="frontErr">${currentLang==='ar'?'من فضلك اكتب السؤال.':'Please enter a question.'}</div>
         </div>
+
         <div class="mfield">
-          <label>${currentLang==='ar'?'الإجابة (ضهر البطاقة)':'Answer (back)'}</label>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <label style="margin-bottom:0;">${currentLang==='ar'?'الإجابة (ضهر البطاقة)':'Answer (back)'}</label>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="tool-chip" id="backAddMath" style="font-size:0.7rem; padding:2px 7px; border-radius:6px; background:var(--panel-hi); border:1px solid var(--line); color:var(--text); cursor:pointer;">+ Math $</button>
+              <button type="button" class="tool-chip" id="backAddDisplayMath" style="font-size:0.7rem; padding:2px 7px; border-radius:6px; background:var(--panel-hi); border:1px solid var(--line); color:var(--text); cursor:pointer;">+ Block $$</button>
+              <button type="button" class="tool-chip" id="backAddBold" style="font-size:0.7rem; padding:2px 7px; border-radius:6px; background:var(--panel-hi); border:1px solid var(--line); color:var(--text); cursor:pointer;">+ Bold</button>
+            </div>
+          </div>
           <textarea id="cardBackInput" placeholder="${currentLang==='ar'?'اكتب الإجابة هنا…':'Type the answer here…'}">${escapeHtml(existing ? existing.back : '')}</textarea>
           <div class="mfield-err" id="backErr">${currentLang==='ar'?'من فضلك اكتب الإجابة.':'Please enter an answer.'}</div>
         </div>
+
+        <div class="mfield">
+          <label style="font-size:0.75rem; color:var(--text-faint);">${currentLang==='ar'?'معاينة حية للصيغ والمعادلات (KaTeX)':'Live Math & Formula Preview'}</label>
+          <div id="cardLivePreview" style="padding:10px 14px; border-radius:10px; background:var(--bg); border:1px solid var(--line-soft); min-height:46px; font-size:0.92rem; line-height:1.6; color:var(--text);"></div>
+        </div>
+
         <div class="mfield">
           <label>${currentLang==='ar'?'صورة (اختياري)':'Image (optional)'}</label>
           <div id="imagePreviewArea"></div>
@@ -1000,6 +1110,61 @@
       };
       reader.readAsDataURL(file);
     });
+
+    const frontInput = document.getElementById('cardFrontInput');
+    const backInput = document.getElementById('cardBackInput');
+    const livePreview = document.getElementById('cardLivePreview');
+
+    function wrapSelection(textarea, prefix, suffix, placeholder){
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = textarea.value;
+      const selected = text.substring(start, end) || placeholder;
+      textarea.value = text.substring(0, start) + prefix + selected + suffix + text.substring(end);
+      textarea.focus();
+      textarea.setSelectionRange(start + prefix.length, start + prefix.length + selected.length);
+      updateLivePreview();
+    }
+
+    function renderMathPreview(str){
+      if (!str) return '';
+      let res = str.replace(/{{c\d+::(.*?)(?:::.*?)?}}/g, '<span style="color:var(--accent); font-weight:700; background:rgba(6,182,212,0.15); padding:1px 5px; border-radius:4px;">[$1]</span>');
+      res = res.replace(/\$\$([\s\S]*?)\$\$/g, (m, f) => {
+        try { if (window.katex) return window.katex.renderToString(f, { displayMode: true, throwOnError: false }); } catch(e){}
+        return m;
+      });
+      res = res.replace(/\$([^\$\n\r]+?)\$/g, (m, f) => {
+        try { if (window.katex) return window.katex.renderToString(f, { displayMode: false, throwOnError: false }); } catch(e){}
+        return m;
+      });
+      return res;
+    }
+
+    function updateLivePreview(){
+      if (!livePreview) return;
+      const f = frontInput.value.trim();
+      const b = backInput.value.trim();
+      if (!f && !b){
+        livePreview.innerHTML = '<span style="color:var(--text-faint); font-style:italic;">Type above to preview KaTeX formulas and clozes…</span>';
+        return;
+      }
+      livePreview.innerHTML = `
+        <div style="margin-bottom:6px;"><strong style="font-size:0.75rem; text-transform:uppercase; color:var(--text-dim); display:block;">Question:</strong> ${renderMathPreview(f) || '<span style="color:var(--text-faint);">(empty)</span>'}</div>
+        <div><strong style="font-size:0.75rem; text-transform:uppercase; color:#10b981; display:block;">Answer:</strong> ${renderMathPreview(b) || '<span style="color:var(--text-faint);">(empty)</span>'}</div>
+      `;
+    }
+
+    frontInput.addEventListener('input', updateLivePreview);
+    backInput.addEventListener('input', updateLivePreview);
+    updateLivePreview();
+
+    document.getElementById('frontAddCloze').addEventListener('click', () => wrapSelection(frontInput, '{{c1::', '}}', 'key term'));
+    document.getElementById('frontAddMath').addEventListener('click', () => wrapSelection(frontInput, '$', '$', 'formula'));
+    document.getElementById('frontAddBold').addEventListener('click', () => wrapSelection(frontInput, '<b>', '</b>', 'text'));
+
+    document.getElementById('backAddMath').addEventListener('click', () => wrapSelection(backInput, '$', '$', 'formula'));
+    document.getElementById('backAddDisplayMath').addEventListener('click', () => wrapSelection(backInput, '$$\n', '\n$$', 'formula'));
+    document.getElementById('backAddBold').addEventListener('click', () => wrapSelection(backInput, '<b>', '</b>', 'text'));
 
     document.getElementById('cancelCardBtn').addEventListener('click', () => {
       editingCardId = null;
@@ -1109,6 +1274,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>
         <span>${currentLang==='ar'?'تحميل ملف .apkg':'Download .apkg file'}</span>
       </button>
+      <button type="button" class="export-btn" id="testDeckBtn" style="margin-top:10px; background:linear-gradient(135deg, #0ea5e9, #06b6d4); color:#000;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <span>${currentLang==='ar'?'تجربة المجموعة في محطة البطاقات FSRS-5':'Test in Clinical FSRS-5 Workstation'}</span>
+      </button>
     `;
 
     html += `
@@ -1182,6 +1351,53 @@
     });
 
     document.getElementById('downloadApkgBtn').addEventListener('click', () => handleDownload(decksWithCards));
+    const testBtn = document.getElementById('testDeckBtn');
+    if (testBtn){
+      testBtn.addEventListener('click', () => {
+        setExportStatus(currentLang==='ar' ? 'بيتم حفظ المجموعة للاختبار…' : 'Preparing test session…');
+        try {
+          const previewId = 'test-' + Date.now();
+          const primaryDeck = decksWithCards[0];
+          const flatCards = [];
+          decksWithCards.forEach(d => {
+            d.cards.forEach((c, idx) => {
+              flatCards.push({
+                id: 'card-' + idx + '-' + Date.now(),
+                deckId: previewId,
+                front: c.front,
+                back: c.back + (c.imageDataUrl ? `<br><img src="${c.imageDataUrl}">` : ''),
+                stability: 0,
+                difficulty: 0,
+                reps: 0
+              });
+            });
+          });
+
+          const req = indexedDB.open('mb_synaptic_vault', 1);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('decks')) db.createObjectStore('decks', { keyPath: 'id' });
+            if (!db.objectStoreNames.contains('cards')) db.createObjectStore('cards', { keyPath: 'id' });
+            if (!db.objectStoreNames.contains('media')) db.createObjectStore('media', { keyPath: 'name' });
+          };
+          req.onsuccess = (e) => {
+            const db = e.target.result;
+            const tx = db.transaction(['decks', 'cards'], 'readwrite');
+            tx.objectStore('decks').put({ id: previewId, title: primaryDeck.name, timestamp: Date.now() });
+            const cardStore = tx.objectStore('cards');
+            flatCards.forEach(c => cardStore.put(c));
+            tx.oncomplete = () => {
+              window.location.href = `/flash.html?id=${previewId}`;
+            };
+            tx.onerror = () => { window.location.href = '/flash.html?deck=demo'; };
+          };
+          req.onerror = () => { window.location.href = '/flash.html?deck=demo'; };
+        } catch(err){
+          console.error(err);
+          window.location.href = '/flash.html?deck=demo';
+        }
+      });
+    }
     document.getElementById('uploadApkgBtn').addEventListener('click', () => handleUpload(decksWithCards));
     document.getElementById('footerBackBtn2').addEventListener('click', () => goStep('cards'));
   }

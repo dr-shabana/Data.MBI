@@ -2076,7 +2076,7 @@
        14. KEYBOARD SHORTCUTS
        ========================================================================= */
     window.addEventListener('keydown', (e) => {
-      if (e.target.closest('input, textarea, select')) return;
+      if (e.target?.closest?.('input, textarea, select')) return;
 
       // Handle Lightbox Zoom Keys
       if (lightboxModal && lightboxModal.classList.contains('open')){
